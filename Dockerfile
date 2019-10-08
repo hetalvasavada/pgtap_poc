@@ -23,7 +23,7 @@ RUN rm -rf pgtap_install
 
 # install pgtap
 ENV PGTAP_VERSION v0.95.0
-RUN git clone git://github.com/theory/pgtap.git \
+RUN git clone git@git.planittesting.com:hvasavada/pgtap_install.git \
     && cd pgtap && git checkout tags/$PGTAP_VERSION \
     && make \
     && make install \
