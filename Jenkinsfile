@@ -6,5 +6,5 @@ pipeline {
         sh 'docker build -t pgTAP_POC:${BUILD_NUMBER} -f Dockerfile .'
       }
     }
-    }
+    
 }
