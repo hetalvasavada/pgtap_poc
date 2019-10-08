@@ -1,10 +1,10 @@
 pipeline {
     agent any 
-    stages {
-        stage('Stage 1') {
-            steps {
-                echo 'Hello world!' 
-            }
-        }
+    stage('Docker Build') {
+      agent any
+      steps {
+        sh 'docker build -t pgTAP_POC:${BUILD_NUMBER} -f Dockerfile .'
+      }
+    }
     }
 }
