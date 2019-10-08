@@ -4,7 +4,7 @@ pipeline {
     stage('Docker Build') {
       agent any
       steps {
-        sh 'docker build -t pgTAP_POC:${BUILD_NUMBER} -f Dockerfile .'
+        sh 'docker build -t pgtap:${BUILD_NUMBER} -f Dockerfile .'
       }
     }
     }
