@@ -20,7 +20,13 @@ pipeline {
                      done
                    '''
                    sh 'echo "Running DB Prerequisites to create pgtap extension"'
-                   sh 'sh /db_prereqs.sh'
+                   //sh 'sh /db_prereqs.sh'
+                   sh 'psql -U postgres -c "CREATE user root"'
+                   sh 'psql -U postgres -c "create database root"'
+                   sh 'psql -U postgres -c "ALTER USER root SUPERUSER CREATEDB;"'
+                   sh 'psql -U postgres -c "create extension if not exists pgtap;"'
+
+                   
                 }
               }
             }
