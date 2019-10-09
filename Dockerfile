@@ -26,6 +26,7 @@ RUN git clone --branch v0.97.0 https://github.com/theory/pgtap.git && \
   cd pgtap && \
   make && \
   make install && \
+  make installcheck && \
   cd /
 #    && cp pgtap--0.95.0.sql /usr/share/postgresql/9.4/extension/pgtap--1.1.0.sql \
 
