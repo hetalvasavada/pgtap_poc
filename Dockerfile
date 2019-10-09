@@ -23,7 +23,7 @@ RUN rm -rf pgtap_install
 ENV PGTAP_VERSION v0.95.0
 RUN git config --global http.sslverify false
 RUN git clone git@git.planittesting.com:hvasavada/pgtap_install.git \
-    && cd pgtap && git checkout tags/$PGTAP_VERSION \
+    && cd pgtap_install && git checkout tags/$PGTAP_VERSION \
     && make \
     && make install \
     && make installcheck
