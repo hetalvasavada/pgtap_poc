@@ -2,8 +2,7 @@ pipeline {
     agent any 
     stages{
     stage('Docker Build') {
-      agent any
-      steps {
+     steps {
         sh 'docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile .'
          docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun(
               "-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}/tests:/tmp/tests") { db ->
@@ -26,9 +25,7 @@ pipeline {
                   }
                }
             }
-        
       }
     }
     }
-    
 }
