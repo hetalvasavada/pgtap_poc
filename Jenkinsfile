@@ -5,9 +5,9 @@ pipeline {
       agent any
       steps {
         sh 'docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile .'
-         docker.image('pgtapjenkins:B${BUILD_NUMBER}').withRun(
+         docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun(
               "-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}/tests:/tmp/tests") { db ->
-                docker.image('pgtapjenkins:B${BUILD_NUMBER}').inside("--link ${db.id}:db") {                  
+                docker.image('pgtapjenkins:${BUILD_NUMBER}').inside("--link ${db.id}:db") {                  
                   try {
                   //Wait for postgres db client to be up
                   sh '''
