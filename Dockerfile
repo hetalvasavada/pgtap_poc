@@ -26,7 +26,6 @@ RUN git clone --branch v0.97.0 https://github.com/theory/pgtap.git && \
   cd pgtap && \
   make && \
   make install && \
-  make installcheck && \
   cd /
 #    && cp pgtap--0.95.0.sql /usr/share/postgresql/9.4/extension/pgtap--1.1.0.sql \
 
@@ -34,10 +33,8 @@ RUN apt update && apt install -y build-essential git cpanminus curl wget unzip
 
 RUN cpanm --notest File::Copy::Recursive Perl::OSType Module::Metadata version TAP::Harness CGI TAP::Harness::Archive TAP::Parser::Source
 
-#ADD ./db_prereqs.sh /db_prereqs.sh
+ADD ./db_prereqs.sh /db_prereqs.sh
 
-#RUN chmod +x /db_prereqs.sh
-
-RUN git config --global http.sslverify false
+RUN chmod +x /db_prereqs.sh
 
 EXPOSE 5432
