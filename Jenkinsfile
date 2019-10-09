@@ -19,6 +19,11 @@ pipeline {
                   '''  
                   
                   }
+                  catch (Exception e) {
+                    sh "rm -rf ${env.pgreport}_${BUILD_NUMBER}*.tap"
+                    sh "echo 'Removed report file for failed job to avoid future failures...'"
+                     e.printStackTrace();                    
+                  }
                }
             }
         
