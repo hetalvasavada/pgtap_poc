@@ -1,35 +1,31 @@
 pipeline {
-    agent any
-     environment {
+  agent any
+  environment {
     POSTGRES_HOST = 'localhost'
-    POSTGRES_USER = 'myuser'
+    POSTGRES_USER = myuser'
   }
-    stages{
-    stage('Docker Build') {
-     steps {
-        sh 'docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile .'
-         docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun(
-              "-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}/tests:/tmp/tests") { db ->
-                docker.image('pgtapjenkins:${BUILD_NUMBER}').inside("--link ${db.id}:db") {                  
-                  try {
-                  //Wait for postgres db client to be up
+
+  stages {
+    stage('run!') {
+      steps {
+        script {
+            docker.image('postgres:${BUILD_NUMBER}').withRun(
+                "-h ${env.POSTGRES_HOST} -e POSTGRES_USER=${env.POSTGRES_USER}"
+            ) { db ->
+// You can your image here but you need psql to be installed inside
+                docker.image('postgres:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
                   sh '''
-                       psql --version
-                       until psql -h localhost -U postgres -c "select 1" > /dev/null 2>&1 || [ $RETRIES -eq 0 ]; do
-                       echo "Waiting for postgres server, $((RETRIES-=1)) remaining attempts..."
-                       sleep 1
-                       done
-                  '''  
-                  
-                  }
-                  catch (Exception e) {
-                    sh "rm -rf ${env.pgreport}_${BUILD_NUMBER}*.tap"
-                    sh "echo 'Removed report file for failed job to avoid future failures...'"
-                     e.printStackTrace();                    
-                  }
-               }
+psql --version
+until psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "select 1" > /dev/null 2>&1 || [ $RETRIES -eq 0 ]; do
+  echo "Waiting for postgres server, $((RETRIES-=1)) remaining attempts..."
+  sleep 1
+done
+'''
+                  sh 'echo "your commands here"'
+                }
+              }
             }
       }
     }
-    }
+  }
 }
