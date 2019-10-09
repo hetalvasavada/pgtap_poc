@@ -2,16 +2,16 @@ pipeline {
   agent any
   environment {
     POSTGRES_HOST = 'localhost'
-    POSTGRES_USER = 'myuser'
+    POSTGRES_USER = myuser'
   }
 
   stages {
     stage('run!') {
       steps {
         script {
+		 sh 'docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile .'
             docker.image('postgres:${BUILD_NUMBER}').withRun(
-                "-h ${env.POSTGRES_HOST} -e POSTGRES_USER=${env.POSTGRES_USER}"
-            ) { db ->
+               "-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}/tests:/tmp/tests"){ db ->
 // You can your image here but you need psql to be installed inside
                 docker.image('postgres:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
                   sh '''
