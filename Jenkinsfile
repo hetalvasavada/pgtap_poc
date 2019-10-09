@@ -25,6 +25,7 @@ pipeline {
                    sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "create database root"'
                    sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "ALTER USER root SUPERUSER CREATEDB;"'
                    sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "create extension if not exists pgtap;"'
+                   sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -Xf sampletest.sql'
                 }
               }
             }
