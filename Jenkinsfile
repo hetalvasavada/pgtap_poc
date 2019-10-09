@@ -9,11 +9,11 @@ pipeline {
     stage('run!') {
       steps {
         script {
-            docker.image('postgres:9.6').withRun(
-                "-h ${env.POSTGRES_HOST} -e POSTGRES_USER=${env.POSTGRES_USER}"
-            ) { db ->
+		 sh 'docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile .'
+            docker.image('postgres:${BUILD_NUMBER}').withRun(
+               "-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}/tests:/tmp/tests"){ db ->
 // You can your image here but you need psql to be installed inside
-                docker.image('postgres:9.6').inside("--link ${db.id}:db") {
+                docker.image('postgres:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
                   sh '''
 psql --version
 until psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "select 1" > /dev/null 2>&1 || [ $RETRIES -eq 0 ]; do
