@@ -19,7 +19,8 @@ pipeline {
                      sleep 1
                      done
                    '''
-                   sh 'echo "your commands here"'
+                   sh 'echo "Running DB Prerequisites to create pgtap extension"'
+                   sh 'sh /db_prereqs.sh'
                 }
               }
             }
