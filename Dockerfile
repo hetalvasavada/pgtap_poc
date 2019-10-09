@@ -22,11 +22,11 @@ RUN rm -rf pgtap_install
 # install pgtap
 ENV PGTAP_VERSION v0.95.0
 RUN git config --global http.sslverify false
-RUN git clone https://github.com/theory/pgtap.git \
-    && cd pgtap && git checkout tags/$PGTAP_VERSION \
-    && make \
-    && make install \
-    && make installcheck
+RUN git clone --branch v0.97.0 https://github.com/theory/pgtap.git && \
+  cd pgtap && \
+  make && \
+  make install && \
+  cd /
 #    && cp pgtap--0.95.0.sql /usr/share/postgresql/9.4/extension/pgtap--1.1.0.sql \
 
 RUN apt update && apt install -y build-essential git cpanminus curl wget unzip
