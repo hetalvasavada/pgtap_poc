@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+  agent { label 'windows' }
   environment {
     POSTGRES_HOST = 'localhost'
     POSTGRES_USER = 'myuser'
