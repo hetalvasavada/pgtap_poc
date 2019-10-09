@@ -4,7 +4,7 @@ pipeline {
     stage('Docker Build') {
       agent any
       steps {
-        sh 'docker build -t pgtap:${BUILD_NUMBER} -f Dockerfile .'
+        sh 'docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile .'
          docker.image('pgtapjenkins:B${BUILD_NUMBER}').withRun(
               "-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}/tests:/tmp/tests") { db ->
                 docker.image('pgtapjenkins:B${BUILD_NUMBER}').inside("--link ${db.id}:db") {                  
