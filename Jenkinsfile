@@ -25,6 +25,10 @@ pipeline {
                    sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "create database root"'
                    sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "ALTER USER root SUPERUSER CREATEDB;"'
                    sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "create extension if not exists pgtap;"'
+                   sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "IF (NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'acme')) 
+                    BEGIN
+                        EXEC ('CREATE SCHEMA sample_schema1;')
+                    END;"'
                    sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -Xf  testcases/sample_schema1/tables/table1_test.t'
                 }
               }
