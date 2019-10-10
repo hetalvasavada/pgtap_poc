@@ -40,4 +40,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT sample_schema1.set_sensor_log();
+SELECT sample_schema1.set_sensor_log(het12,666);
