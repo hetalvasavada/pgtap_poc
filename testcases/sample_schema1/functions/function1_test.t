@@ -4,9 +4,6 @@ BEGIN;
 SELECT plan(3);
 \i  src/sample_schema1/functions/function1.sql
 
-INSERT INTO sensor_log (sensor_log_id, location, reading, reading_date)
-VALUES (99999, '999', 499, now());
-
 SELECT lives_ok(
     $$ SELECT get_sensor_log('999') $$,
     'Check get_sensor_log - basic execution'
