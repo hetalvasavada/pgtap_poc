@@ -36,7 +36,7 @@ pipeline {
                                                                     isSourceChanged=true                                                              
                                                                     println sourceChanged[i]
                                                                     println isSourceChanged
-                                                                    sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${sourceChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
+                                                                    sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${sourceChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}${BUILD_NUMBER}${i}.tap"
                             }                            
                         }                     
                             if (!isSourceChanged) {
@@ -44,7 +44,7 @@ pipeline {
                                             return
                         }
                    
-                  // sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/functions/function1_test.t -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}.tap"
+                  // sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/functions/function1_test.t -e >> ${env.WORKSPACE}/${env.pgreport}${BUILD_NUMBER}.tap"
                   }
               }
      
