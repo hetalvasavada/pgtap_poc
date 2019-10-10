@@ -1,25 +1,22 @@
--- Commentt
 BEGIN;
 
 SELECT plan(3);
 \i  src/sample_schema1/functions/function1.sql
 
 SELECT lives_ok(
-    $$ SELECT get_sensor_log('999') $$,
-    'Check get_sensor_log - basic execution'
+    $$ SELECT sample_schema1.set_sensor_log('1', 1) $$,
+    'Check set_sensor_log - basic execution'
 );
 
-SELECT results_eq(
-    $$ SELECT * FROM get_sensor_log('999') $$,
-    $$ VALUES (99999::INT, '999'::VARCHAR, 
-          499::BIGINT, now()::TIMESTAMP) $$,
-    'Check get_sensor_log - existing location'
+SELECT is(
+    sample_schema1.set_sensor_log('10', 20), True,
+    'Check set_sensor_log - new value'
 );
 
 SELECT throws_ok(
-    $$ SELECT get_sensor_log('998') $$,
-    '"998" is an invalid location!',
-    'Check get_sensor_log - invalid location'
+    $$ SELECT sample_schema1.set_sensor_log('100', 599) $$,
+    '"599" is an invalid reading!',
+    'Check set_sensor_log - invalid reading'
 );
 
 ROLLBACK;
