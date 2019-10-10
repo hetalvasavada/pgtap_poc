@@ -1,11 +1,8 @@
+CREATE SCHEMA [IF NOT EXISTS] sample_schema1;
 CREATE OR REPLACE FUNCTION sample_schema1.create_mytable ()
 RETURNS void AS
 $func$
 BEGIN
-IF (NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'sample_schema1')) 
-BEGIN
-    EXEC ('CREATE SCHEMA sample_schema1')
-END
 
 IF EXISTS (SELECT * FROM pg_catalog.pg_tables 
 WHERE schemaname = 'sample_schema1'
