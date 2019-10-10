@@ -50,7 +50,7 @@ pipeline {
               }
      
             }
-      step([$class: "TapPublisher", testResults: "**/${env.pgreport}_${BUILD_NUMBER}.tap"])
+      step([$class: "TapPublisher", testResults: "**${env.WORKSPACE}/${env.pgreport}${BUILD_NUMBER}${i}.tap"])
       }
     }
   }
