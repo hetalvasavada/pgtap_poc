@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION create_mytable ()
+CREATE OR REPLACE FUNCTION sample_schema1.create_mytable ()
 RETURNS void AS
 $func$
 BEGIN
@@ -12,10 +12,10 @@ userid_test integer PRIMARY KEY,
 company varchar NULL,
 subcoy int2 NULL,
 state bpchar(2) NULL,
-price numeric CHECK (price > 0),
-product_no integer REFERENCES sample_schema1.mv_motor_company_pk (userid_test)
+price numeric CHECK (price > 0)
+--product_no integer REFERENCES sample_schema1.mv_motor_company_pk (userid_test)
 );
 END IF;
 END
 $func$ LANGUAGE plpgsql;
-SELECT create_mytable();
+SELECT sample_schema1.create_mytable();
