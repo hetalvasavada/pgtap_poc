@@ -35,6 +35,11 @@ RUN git clone https://github.com/theory/pgtap.git \
 ADD ./db_prereqs.sh /db_prereqs.sh
 RUN chmod +x /db_prereqs.sh
 
+RUN git config --global http.sslverify false
+
+EXPOSE 5432
+
+
 #ADD ./test.sh /test.sh
 #RUN chmod +x /test.sh
 
