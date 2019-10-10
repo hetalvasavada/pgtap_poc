@@ -36,7 +36,7 @@ pipeline {
                                                                     isSourceChanged=true                                                              
                                                                     println sourceChanged[i]
                                                                     println isSourceChanged
-                                                                    sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${env.WORKSPACE}/${sourceChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
+                                                                    sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${sourceChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
                             }                            
                         }                     
                             if (!isSourceChanged) {
