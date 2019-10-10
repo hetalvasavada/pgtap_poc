@@ -21,7 +21,7 @@ pipeline {
                    '''
                    sh 'echo "Running DB Prerequisites to create pgtap extension"'
                    sh '/db_prereqs.sh ${POSTGRES_HOST} ${POSTGRES_USER}'
-                  // sh "psql ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/tables/table1_test.t -e"
+                   sh "psql ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/tables/table1_test.t -e"
                   }
               }
             }
