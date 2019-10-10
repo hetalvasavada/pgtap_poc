@@ -1,9 +1,12 @@
 pipeline {
   agent any
   environment {
-    POSTGRES_HOST = 'localhost'
-    POSTGRES_USER = 'postgres'
-  }
+      POSTGRES_HOST = "localhost"
+      POSTGRES_USER = "postgres" 
+      pgreport = "pgtapreport"
+      testdir = "pgtaptests"      
+   }
+
 
   stages {
     stage('run!') {
@@ -21,10 +24,12 @@ pipeline {
                    '''
                    sh 'echo "Running DB Prerequisites to create pgtap extension"'
                    sh '/db_prereqs.sh ${POSTGRES_HOST} ${POSTGRES_USER}'
-                   sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/tables/table1_test.t -e"
+                   sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/tables/table1_test.t -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}.tap"
                   }
               }
+     
             }
+      step([$class: "TapPublisher", testResults: "**/${env.pgreport}_${BUILD_NUMBER}.tap"])
       }
     }
   }
