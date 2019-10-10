@@ -1,3 +1,4 @@
+--Comment added
 BEGIN;
 SELECT plan(3);
 \i  src/sample_schema1/functions/function1.sql
