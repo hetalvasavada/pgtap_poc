@@ -7,7 +7,7 @@
 \set ON_ERROR_STOP true
 \set QUIET 1
 BEGIN;
-\i src/sample_ctx/tables/table1.sql
+\i src/sample_schema1/tables/table1.sql
 SELECT plan(9);
 SELECT columns_are('sample_ctx','mv_motor_company',ARRAY['userid_test','company','price','product_no','subcoy','state'],'All Columns exist in mv_motor_company table');
 SELECT col_type_is('sample_ctx','mv_motor_company','company','character varying','Column type is character varying');
