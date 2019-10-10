@@ -1,7 +1,6 @@
 BEGIN;
-
-SELECT plan(3);
 \i  src/sample_schema1/functions/function1.sql
+SELECT plan(3);
 
 SELECT lives_ok(
     $$ SELECT sample_schema1.set_sensor_log('1', 1) $$,
