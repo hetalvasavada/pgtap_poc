@@ -1,5 +1,5 @@
 POSTGRES_HOST=$1
-POSTGRES_HOST=$2
+POSTGRES_USER=$2
 
 psql -h $POSTGRES_HOST -U $POSTGRES_USER -c "CREATE user root"
 psql -h $POSTGRES_HOST -U $POSTGRES_USER -c "create database root"
