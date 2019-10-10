@@ -1,4 +1,4 @@
--- Comme
+-- Comment
 BEGIN;
 
 SELECT plan(3);
