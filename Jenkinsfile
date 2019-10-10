@@ -20,13 +20,9 @@ pipeline {
                      done
                    '''
                    sh 'echo "Running DB Prerequisites to create pgtap extension"'
-                   //sh 'sh /db_prereqs.sh'
-                   sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "CREATE user root"'
-                   sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "create database root"'
-                   sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "ALTER USER root SUPERUSER CREATEDB;"'
-                   sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "create extension if not exists pgtap;"'
-                   sh 'psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -Xf  testcases/sample_schema1/tables/table1_test.t'
-                }
+                   sh '/db_prereqs.sh ${POSTGRES_HOST} ${POSTGRES_USER}'
+                  // sh "psql ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/tables/table1_test.t -e"
+                  }
               }
             }
       }
