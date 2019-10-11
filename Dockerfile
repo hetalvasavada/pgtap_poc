@@ -38,10 +38,10 @@ RUN chmod +x /db_prereqs.sh
 
 RUN curl --insecure -LO http://xrl.us/cpanm \
     && chmod +x cpanm \
-    && ./cpanm TAP::Parser::SourceHandler::pgtap \
+    && ./cpanm TAP::Parser::SourceHandler::pgTAP \
     && ./cpanm DBI \
-    && ./cpanm DBD::Pg 
-    #&& ./cpanm pg_tapgen 
+    && ./cpanm DBD::Pg \ 
+    && ./cpanm pg_TAPgen 
 
 
 RUN git config --global http.sslverify false
