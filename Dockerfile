@@ -40,8 +40,8 @@ RUN curl --insecure -LO http://xrl.us/cpanm \
     && chmod +x cpanm \
     && ./cpanm TAP::Parser::SourceHandler::pgTAP \
     && ./cpanm DBI \
-    && ./cpanm DBD::Pg \ 
-    && ./cpanm pg_TAPgen 
+    && ./cpanm DBD::Pg  
+    #&& ./cpanm pg_TAPgen 
 
 
 RUN git config --global http.sslverify false
