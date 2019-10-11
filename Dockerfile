@@ -38,7 +38,7 @@ RUN chmod +x /db_prereqs.sh
 
 RUN curl --insecure -LO http://xrl.us/cpanm \
     && chmod +x cpanm \
-    && ./cpanm TAP::Parser::SourceHandler::pg_tapgen \
+    && ./cpanm TAP::Parser::SourceHandler::pgtap \
     && ./cpanm DBI \
     && ./cpanm DBD::Pg 
     #&& ./cpanm pg_tapgen 
