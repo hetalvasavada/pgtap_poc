@@ -35,6 +35,12 @@ RUN git clone https://github.com/theory/pgtap.git \
 ADD ./db_prereqs.sh /db_prereqs.sh
 RUN chmod +x /db_prereqs.sh
 
+
+RUN curl --insecure -LO http://xrl.us/cpanm \
+    && chmod +x cpanm \
+    && ./cpanm DBI \
+    && ./cpanm DBD::Pg 
+
 RUN git config --global http.sslverify false
 
 EXPOSE 5432
