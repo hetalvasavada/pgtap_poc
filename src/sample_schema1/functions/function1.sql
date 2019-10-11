@@ -38,4 +38,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT sample_schema1.set_sensor_log();
+SELECT sample_schema1.set_sensor_log('hetal1',499);
