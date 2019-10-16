@@ -91,17 +91,21 @@ pipeline {
 	def thr = Thread.currentThread()
 	        def currentJob = manager.build
 	def putToFile = ""
+	println "for (def action : currentJob.actions)"
 	for (def action : currentJob.actions) {   
 	          if (action.getClass() == org.tap4j.plugin.TapTestResultAction) {
 	            println 'Gathered Test Results'
+	   println "def noOfFailedTests = action.getFailCount()"
 	   def noOfFailedTests = action.getFailCount() 
 	       def noOfTotalTests = action.getTotalCount() 
 	       def noOfSkippedTests = action.getSkipCount()
 	   def noOfPassedTests = noOfTotalTests - noOfFailedTests - noOfSkippedTests
 	   def result = "Pass"
+	    println "if (noOfFailedTests > 0) {"
 	   if (noOfFailedTests > 0) {
 	    result = "Fail"
 	   }       
+	   println "def now = new Date()"
 	   def now = new Date()
 	            println now.format("yy/MM/dd.HH-mm", TimeZone.getTimeZone('UTC')) 
 	   def timee = now.format("yy/MM/dd.HH-mm", TimeZone.getTimeZone('UTC'))
