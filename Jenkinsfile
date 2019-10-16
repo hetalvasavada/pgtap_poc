@@ -53,5 +53,19 @@ pipeline {
       step([$class: "TapPublisher", testResults: "**/${env.pgreport}_${BUILD_NUMBER}*.tap"])
       }
     }
+	
+	stage("first"){
+            steps {
+                timestamps {
+                      logstash{ 
+                       echo "hello world 1"
+                      }
+                  
+                }
+            }
+        }
+	
+	
+	
   }
 }
