@@ -50,22 +50,67 @@ pipeline {
               }
      
             }
-      step([$class: "TapPublisher", testResults: "**/${env.pgreport}_${BUILD_NUMBER}*.tap"])
+ 
       }
     }
 	
-	stage("first"){
-            steps {
-                timestamps {
-                      logstash{ 
-                       echo "hello world 1"
-                      }
-                  
-                }
-            }
-        }
-	
+	 stage('Publish Test Results') { 
+	        //This step will publish the result in Jenkins Build link under 'Extended TAP Tests Results'
+	        steps {
+	       timestamps {
+	                logstash{       
+	                     step([$class: "TapPublisher", testResults: "**/${env.pgreport}_${BUILD_NUMBER}*.tap"]) 
+	                //Next step is to gather datato send to ELK
+	                script {
+	try {
+	                //Parse and get results data from TAP PLugin APIs
+	                def sample = parseTAPTests()
+	                //Collect User (who did last git commit) details and time of job run 
+	                def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()                     
+	                writeFile file: "report.txt", text: "RESULT_SET:${sample},${user}"
+	                sh "cat report.txt" 
+	} catch (Exception e) {
+	                      e.printStackTrace()
+	          currentBuild.result = 'FAILURE'
+	                                         }  
+	                   }
+	               }
+	                }   
+	            }      
+	        }
 	
 	
   }
 }
+
+@NonCPS
+	def parseTAPTests() {   
+	def thr = Thread.currentThread()
+	        def currentJob = manager.build
+	def putToFile = ""
+	for (def action : currentJob.actions) {   
+	          if (action.getClass() == org.tap4j.plugin.TapTestResultAction) {
+	            println 'Gathered Test Results'
+	   def noOfFailedTests = action.getFailCount() 
+	       def noOfTotalTests = action.getTotalCount() 
+	       def noOfSkippedTests = action.getSkipCount()
+	   def noOfPassedTests = noOfTotalTests - noOfFailedTests - noOfSkippedTests
+	   def result = "Pass"
+	   if (noOfFailedTests > 0) {
+	    result = "Fail"
+	   }       
+	   def now = new Date()
+	            println now.format("yy/MM/dd.HH-mm", TimeZone.getTimeZone('UTC')) 
+	   def timee = now.format("yy/MM/dd.HH-mm", TimeZone.getTimeZone('UTC'))
+	 println "TOTAL_NO_TESTS: ${noOfTotalTests}"
+	 println "TOTAL_PASS_TESTS: ${noOfPassedTests}"
+	 println "TOTAL_FAIL_TESTS: ${noOfFailedTests}"
+	  println "TOTAL_RESULTS: ${result}"
+	  println "TOTAL_TIME: ${timee}"
+	 putToFile = "${noOfTotalTests},${noOfPassedTests},${noOfFailedTests},${result},${timee}"
+	//def putToFile = "Sample Text"     
+	   
+	         }
+	       }
+	    return putToFile.toString()
+	 }
