@@ -65,7 +65,7 @@ pipeline {
 	                //Next step is to gather datato send to ELK
 	                script {
 	                  try {
-						//Parse and get results data from TAP PLugin APIs
+						println "Parse and get results data from TAP PLugin APIs"
 						def sample = parseTAPTests()
 						//Collect User (who did last git commit) details and time of job run 
 						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()                     
@@ -86,7 +86,8 @@ pipeline {
 }
 
 @NonCPS
-	def parseTAPTests() {   
+	def parseTAPTests() {  
+	println "Start of parseTAPTests function"
 	def thr = Thread.currentThread()
 	        def currentJob = manager.build
 	def putToFile = ""
@@ -114,5 +115,6 @@ pipeline {
 	   
 	         }
 	       }
+	       println "End of parseTAPTests function"
 	    return putToFile.toString()
 	 }
