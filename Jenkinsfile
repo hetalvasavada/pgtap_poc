@@ -1,3 +1,5 @@
+import hudson.model.*
+
 pipeline {
   agent any
   environment {
@@ -32,17 +34,17 @@ pipeline {
                         def isChangelogUpdated = false
                         for (int i = 0; i < sourceChanged.size(); i++) {
                             if (sourceChanged[i].contains("testcases")) {
-                                                                // Found some new/edited tests files to be run under testcases folder, so run each one:
-                                                                    isSourceChanged=true                                                              
-                                                                    println sourceChanged[i]
-                                                                    println isSourceChanged
-                                                                    sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${sourceChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
-                                                                    sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
+                                // Found some new/edited tests files to be run under testcases folder, so run each one:
+                                isSourceChanged=true                                                              
+                                println sourceChanged[i]
+                                println isSourceChanged
+                                sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${sourceChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
+                                sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
                             }                            
                         }                     
                             if (!isSourceChanged) {
-                            println "pgTapTests not changed in this git commit so not running any tests. No report will be generated or sent anywhere."
-                                            return
+                                println "pgTapTests not changed in this git commit so not running any tests. No report will be generated or sent anywhere."
+                                return
                         }
                    
                   // sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/functions/function1_test.t -e >> ${env.WORKSPACE}/${env.pgreport}${BUILD_NUMBER}.tap"
@@ -57,30 +59,30 @@ pipeline {
 	 stage('Publish Test Results') { 
 	        //This step will publish the result in Jenkins Build link under 'Extended TAP Tests Results'
 	        steps {
-	       timestamps {
-	                logstash{       
+	            timestamps {
+	              logstash{       
 	                     step([$class: "TapPublisher", testResults: "**/${env.pgreport}_${BUILD_NUMBER}*.tap"]) 
 	                //Next step is to gather datato send to ELK
 	                script {
-	try {
-	                //Parse and get results data from TAP PLugin APIs
-	                def sample = parseTAPTests()
-	                //Collect User (who did last git commit) details and time of job run 
-	                def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()                     
-	                writeFile file: "report.txt", text: "RESULT_SET:${sample},${user}"
-	                sh "cat report.txt" 
-	} catch (Exception e) {
+	                  try {
+						//Parse and get results data from TAP PLugin APIs
+						def sample = parseTAPTests()
+						//Collect User (who did last git commit) details and time of job run 
+						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()                     
+						writeFile file: "report.txt", text: "RESULT_SET:${sample},${user}"
+						sh "cat report.txt" 
+	                  } catch (Exception e) {
 	                      e.printStackTrace()
-	          currentBuild.result = 'FAILURE'
-	                                         }  
-	                   }
-	               }
-	                }   
-	            }      
-	        }
+	                      currentBuild.result = 'FAILURE'
+	                  }  
+	                }
+	              }
+	            }   
+	        }      
+	    }
 	
 	
-  }
+    }
 }
 
 @NonCPS
