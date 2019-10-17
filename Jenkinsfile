@@ -81,13 +81,12 @@ pipeline {
                       sh """
                          cat > message.json <<EOF
                         {
-                        "enviroment": "$ENV",
-                        "build_number": "$BUILD_NUMBER",
-                        "build_tag": "$BUILD_TAG",
-                        "job_base_name": "$JOB_BASE_NAME",
-                        "job_name": "$JOB_NAME",
-                        "node_name": "$NODE_NAME",
-                        "node_labels": "$NODE_LABELS",
+                        "build_number": "${BUILD_NUMBER}",
+                        "build_tag": "${BUILD_TAG}",
+                        "job_base_name": "${JOB_BASE_NAME}",
+                        "job_name": "${JOB_NAME}",
+                        "node_name": "${NODE_NAME}",
+                        "node_labels": "${NODE_LABELS}",
                         "status": currentBuild.currentResult,
                         "date": now.format("yy/MM/dd.HH-mm", TimeZone.getTimeZone('UTC')) 
                         }
