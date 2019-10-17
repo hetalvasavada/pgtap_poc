@@ -76,6 +76,25 @@ pipeline {
 	                      currentBuild.result = 'FAILURE'
 	                  }  
 	                }
+	                script {
+                      sh """
+                         cat > message.json <<EOF
+                        {
+                        "enviroment": "$ENV",
+                        "build_number": "$BUILD_NUMBER",
+                        "build_tag": "$BUILD_TAG",
+                        "job_base_name": "$JOB_BASE_NAME",
+                        "job_name": "$JOB_NAME",
+                        "node_name": "$NODE_NAME",
+                        "node_labels": "$NODE_LABELS",
+                        "status": currentBuild.currentResult,
+                        "date": "$(date +%Y%m%d-%H:%M:%S)"
+                        }
+                        EOF
+
+                        curl -XPUT '${env.JENKINS_HOST}:9200/logstashtest/jenkins/1?pretty' -d '@message.json'
+                        """
+	                }
 	              }
 	            }   
 	        }      
