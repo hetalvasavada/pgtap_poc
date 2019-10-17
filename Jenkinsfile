@@ -77,6 +77,7 @@ pipeline {
 	                  }  
 	                }
 	                script {
+	                  def now = new Date()
                       sh """
                          cat > message.json <<EOF
                         {
@@ -88,7 +89,7 @@ pipeline {
                         "node_name": "$NODE_NAME",
                         "node_labels": "$NODE_LABELS",
                         "status": currentBuild.currentResult,
-                        "date": "$(date +%Y%m%d-%H:%M:%S)"
+                        "date": now.format("yy/MM/dd.HH-mm", TimeZone.getTimeZone('UTC')) 
                         }
                         EOF
 
