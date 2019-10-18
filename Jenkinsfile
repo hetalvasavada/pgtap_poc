@@ -7,10 +7,6 @@ pipeline {
       POSTGRES_USER = "postgres" 
       pgreport = "pgtapreport"
       testdir = "pgtaptests"
-	  TESTS_TOTAL = 0
-	  TESTS_PASS = 0
-	  TESTS_FAIL = 0
-	  TESTS_SKIPPED = 0	        
    }
 
 
@@ -106,25 +102,29 @@ pipeline {
 @NonCPS
 	def parseTAPTests() {  
 	println "Start of parseTAPTests function"
+	  def noOfFailedTests = 0 
+	  def noOfTotalTests = 0
+	  def noOfSkippedTests = 0
+	  def noOfPassedTests = 0
+	  def result = "SUCCESS"
+                
 	def thr = Thread.currentThread()
 	        def currentJob = manager.build
 	        def putToFile = "Sample"
 	        for (def action : currentJob.actions) {   
 	           if (action.getClass() == org.tap4j.plugin.TapTestResultAction) {
 	              println 'Gathering Test Results....'
-	              def noOfFailedTests = action.getFailCount() 
-				  def noOfTotalTests = action.getTotalCount()
-				  def noOfSkippedTests = action.getSkipCount()
-	   			  def noOfPassedTests = noOfTotalTests - noOfFailedTests - noOfSkippedTests
-                  def result = "SUCCESS"
+	              noOfFailedTests = action.getFailCount() 
+				  noOfTotalTests = action.getTotalCount()
+				  noOfSkippedTests = action.getSkipCount()
+	   			  noOfPassedTests = noOfTotalTests - noOfFailedTests - noOfSkippedTests
 	   			  if (noOfFailedTests > 0) {
 	    				result = "FAILURE"
 	   			  }       
-	 			  println "TOTAL_NO_TESTS: ${noOfTotalTests} , TOTAL_PASS_TESTS: ${noOfPassedTests}, TOTAL_FAIL_TESTS: ${noOfFailedTests}, TOTAL_RESULTS: ${result}"
-	 			  putToFile = "\"Job_Status\": \"${result}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${noOfPassedTests}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" "
-	 			  //println "${putToFile}"
-	         }
+	 		 }
 	       }
+	       println "TOTAL_NO_TESTS: ${noOfTotalTests} , TOTAL_PASS_TESTS: ${noOfPassedTests}, TOTAL_FAIL_TESTS: ${noOfFailedTests}, TOTAL_RESULTS: ${result}"
+	 	   putToFile = "\"Job_Status\": \"${result}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${noOfPassedTests}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" "
 	       println "Done....End of parseTAPTests function"
 	    return putToFile.toString()
 	 }
