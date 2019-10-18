@@ -128,7 +128,7 @@ pipeline {
 	  			  println "TOTAL_RESULTS: ${result}"
 	  			  println "TOTAL_TIME: ${timee}"
 	 			  //putToFile = "${noOfTotalTests},${noOfPassedTests},${noOfFailedTests},${result},${timee}"
-				  def putToFile = "Sample Text"   
+				  //def putToFile = "Sample Text"   
 	 			  putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${resultpassed}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${env.TESTS_PASS}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"	   
 	 			  println "${putToFile}"
 	         }
