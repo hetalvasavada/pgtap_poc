@@ -73,10 +73,13 @@ pipeline {
 						def now = new Date()
 	                    def timee = now.format("yy/MM/dd:HH-mm", TimeZone.getTimeZone('UTC'))
 						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()   
-						def part1 = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"SUCCESS\", \"Triggered By\": \"Naina Prabhu\", \"Triggered_Date\": \"18-10-2019:03-30\", "
+						println "${user} ++++ ${timee}"
+						def part1 = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"SUCCESS\", \"Triggered_By\": \"Naina Prabhu\",	\"Triggered_Date\": \"${timee}\", "
+						println "${part1}"
 						def sample = parseTAPTests()
 						def part2 = "${sample} }"
 						def jsoncontent = "${part1} ${part2}"
+						println "${jsoncontent}"
 						//Collect User (who did last git commit) details and time of job run 
 						writeFile file: "message.json", text: "${jsoncontent}"
 					    sh "cat message.json"					  
