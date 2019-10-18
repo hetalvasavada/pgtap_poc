@@ -75,20 +75,19 @@ pipeline {
 						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()                     
 						writeFile file: "report.txt", text: "${sample}"
 						sh "cat report.txt" 
+						 writeFile file: "message.json", text: "${sample}"
+					    sh "cat message.json"					  
+	                     def cmd = "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\""
+	                    sh 'echo $cmd'
+	                    def response = sh(returnStdout: true, script: "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\"")
+                        sh "echo $response" 
+	                
 	                  } catch (Exception e) {
 	                      e.printStackTrace()
 	                      currentBuild.result = 'FAILURE'
 	                  }  
 	                }
-	                script {
-	                //  def now = new Date()
-	                  writeFile file: "message.json", text: "${sample}"
-					  sh "cat message.json"					  
-	                  def cmd = "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\""
-	                  sh 'echo $cmd'
-	                  def response = sh(returnStdout: true, script: "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\"")
-                      sh "echo $response" 
-	                }
+	               
 	              }
 	            }   
 	        }      
