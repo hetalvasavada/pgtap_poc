@@ -73,7 +73,7 @@ pipeline {
 						def now = new Date()
 	                    def timee = now.format("yy/MM/dd:HH-mm", TimeZone.getTimeZone('UTC'))
 						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()   
-						def part1 = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${currentBuild.result}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", "
+						def part1 = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"SUCCESS\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", "
 						def sample = parseTAPTests()
 						def part2 = "${sample} }"
 						def jsoncontent = "${part1} ${part2}"
