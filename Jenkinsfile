@@ -74,7 +74,7 @@ pipeline {
 	                    def timee = now.format("yy/MM/dd:HH-mm", TimeZone.getTimeZone('UTC'))
 						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()   
 						println "${user} ++++ ${timee}"
-						def part1 = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"SUCCESS\", \"Triggered_By\": \"Naina Prabhu\",	\"Triggered_Date\": \"${timee}\", "
+						def part1 = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \" currentBuild.result \", \"Triggered_By\": \" ${user}\",	\"Triggered_Date\": \"${timee}\", "
 						println "${part1}"
 						def sample = parseTAPTests()
 						def part2 = "${sample} }"
@@ -104,7 +104,7 @@ pipeline {
 
 @NonCPS
 	def parseTAPTests() {  
-	println "Start of parseTAPTests function ${user}"
+	println "Start of parseTAPTests function"
 	def thr = Thread.currentThread()
 	        def currentJob = manager.build
 	        def putToFile = "Sample"
