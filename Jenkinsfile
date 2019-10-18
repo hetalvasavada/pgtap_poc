@@ -96,7 +96,7 @@ pipeline {
 
 @NonCPS
 	def parseTAPTests(String user) {  
-	println "Start of parseTAPTests function"
+	println "Start of parseTAPTests function ${user}"
 	def thr = Thread.currentThread()
 	        def currentJob = manager.build
 	        def putToFile = "Sample"
@@ -127,7 +127,7 @@ pipeline {
 	 			  //putToFile = "${noOfTotalTests},${noOfPassedTests},${noOfFailedTests},${result},${timee}"
 				  //def putToFile = "Sample Text"   
 	 			  //putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${result}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${env.TESTS_PASS}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"	   
-	 			  putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${result}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${env.TESTS_PASS}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"
+	 			  putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${result}\", \"Triggered By\": \"${user}\" }"
 	 			  println "${putToFile}"
 	         }
 	       }
