@@ -79,7 +79,7 @@ pipeline {
 	                script {
 	                //  def now = new Date()
 	                  sh "cat message.json"
-	                  def response = sh(script: "curl  -XPOST \"http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins\" -H \"Content-Type: application/json\" -d \"@message.json\"', returnStdout: true)
+	                  def response = sh(returnStdout: true, script: "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\"')
                       sh "echo $response" 
 	                }
 	              }
