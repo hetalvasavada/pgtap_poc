@@ -70,10 +70,15 @@ pipeline {
 	                script {
 	                  try {
 						println "Parse and get results data from TAP PLugin APIs"						
-						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()                     
-						def sample = parseTAPTests($user)
+						def now = new Date()
+	                    def timee = now.format("yy/MM/dd:HH-mm", TimeZone.getTimeZone('UTC'))
+						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()   
+						def part1 = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${currentBuild.result}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", "
+						def sample = parseTAPTests()
+						def part2 = "${sample} }"
+						def jsoncontent = "${part1} ${part2}"
 						//Collect User (who did last git commit) details and time of job run 
-						writeFile file: "message.json", text: "${sample}"
+						writeFile file: "message.json", text: "${jsoncontent}"
 					    sh "cat message.json"					  
 	                    def cmd = "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\""
 	                    sh 'echo $cmd'
@@ -95,7 +100,7 @@ pipeline {
 }
 
 @NonCPS
-	def parseTAPTests(String user) {  
+	def parseTAPTests() {  
 	println "Start of parseTAPTests function ${user}"
 	def thr = Thread.currentThread()
 	        def currentJob = manager.build
@@ -104,30 +109,23 @@ pipeline {
 	        for (def action : currentJob.actions) {   
 	           if (action.getClass() == org.tap4j.plugin.TapTestResultAction) {
 	              println 'Gathered Test Results'
-	              println "def noOfFailedTests = action.getFailCount()"
-	    		  def noOfFailedTests = action.getFailCount() 
-				  env.TESTS_FAIL =  action.getFailCount() 
-	   			  def noOfTotalTests = action.getTotalCount()
-				  env.TESTS_TOTAL = action.getTotalCount()	  
-	   			  def noOfSkippedTests = action.getSkipCount()
-	   			  env.TESTS_SKIPPED = action.getSkipCount()
-				  def noOfPassedTests = noOfTotalTests - noOfFailedTests - noOfSkippedTests
-                  env.TESTS_PASS =  noOfTotalTests - noOfFailedTests - noOfSkippedTests
-	   			  def result = "SUCCESS"
+	              def noOfFailedTests = action.getFailCount() 
+				  def noOfTotalTests = action.getTotalCount()
+				  def noOfSkippedTests = action.getSkipCount()
+	   			  def noOfPassedTests = noOfTotalTests - noOfFailedTests - noOfSkippedTests
+                  def result = "SUCCESS"
 	   			  if (noOfFailedTests > 0) {
 	    				result = "FAILURE"
 	   			  }       
-	   			  def now = new Date()
-	              def timee = now.format("yy/MM/dd.HH-mm", TimeZone.getTimeZone('UTC'))
 	 			  println "TOTAL_NO_TESTS: ${noOfTotalTests}"
-	 			  println "TOTAL_PASS_TESTS: ${env.TESTS_PASS}"
+	 			  println "TOTAL_PASS_TESTS: ${noOfPassedTests}"
 	 			  println "TOTAL_FAIL_TESTS: ${noOfFailedTests}"
 	  			  println "TOTAL_RESULTS: ${result}"
 	  			  println "TOTAL_TIME: ${timee}"
 	 			  //putToFile = "${noOfTotalTests},${noOfPassedTests},${noOfFailedTests},${result},${timee}"
 				  //def putToFile = "Sample Text"   
 	 			  //putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${result}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${env.TESTS_PASS}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"	   
-	 			  putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${result}\", \"Triggered By\": \"${user}\" }"
+	 			  putToFile = " \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${noOfPassedTests}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" "
 	 			  println "${putToFile}"
 	         }
 	       }
