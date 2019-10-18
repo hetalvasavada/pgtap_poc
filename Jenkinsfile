@@ -66,7 +66,7 @@ pipeline {
 	                script {
 	                  try {
 						println "Parse and get results data from TAP PLugin APIs"
-						def sample = parseTAPTests()
+						def sample = parseTAPTests(currentBuild.currentResult)
 						//Collect User (who did last git commit) details and time of job run 
 						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()                     
 						writeFile file: "report.txt", text: "RESULT_SET:${sample},${user}"
@@ -79,7 +79,8 @@ pipeline {
 	                script {
 	                //  def now = new Date()
 	                  sh "cat message.json"
-                      sh 'curl  -XPOST "http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins" -H "Content-Type: application/json" -d "@message.json"'
+	                  def response = sh(script: "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H 'Content-Type: application/json' -d \"@message.json\"', returnStdout: true)
+                      sh "echo $response" 
 	                }
 	              }
 	            }   
@@ -91,7 +92,7 @@ pipeline {
 }
 
 @NonCPS
-	def parseTAPTests() {  
+	def parseTAPTests(String resultpassed) {  
 	println "Start of parseTAPTests function"
 	def thr = Thread.currentThread()
 	        def currentJob = manager.build
@@ -102,11 +103,10 @@ pipeline {
 	            println 'Gathered Test Results'
 	   println "def noOfFailedTests = action.getFailCount()"
 	   def noOfFailedTests = action.getFailCount() 
-	       def noOfTotalTests = action.getTotalCount() 
-	       def noOfSkippedTests = action.getSkipCount()
+	   def noOfTotalTests = action.getTotalCount() 
+	   def noOfSkippedTests = action.getSkipCount()
 	   def noOfPassedTests = noOfTotalTests - noOfFailedTests - noOfSkippedTests
 	   def result = "Pass"
-	    println "if (noOfFailedTests > 0) {"
 	   if (noOfFailedTests > 0) {
 	    result = "Fail"
 	   }       
@@ -121,8 +121,7 @@ pipeline {
 	  println "TOTAL_TIME: ${timee}"
 	 putToFile = "${noOfTotalTests},${noOfPassedTests},${noOfFailedTests},${result},${timee}"
 	//def putToFile = "Sample Text"   
-	
-	 writeFile file: "message.json", text: "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"currentBuild.currentResult\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"now.format('yy/MM/dd.HH-mm', TimeZone.getTimeZone('UTC'))\", \"TESTS_TOTAL:\": \"${noOfTotalTests}\", \"TESTS_PASS:\": \"${noOfPassedTests}\",\"TESTS_FAIL:\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"
+	 writeFile file: "message.json", text: "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${resultpassed}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL:\": \"${noOfTotalTests}\", \"TESTS_PASS:\": \"${noOfPassedTests}\",\"TESTS_FAIL:\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"
 
 	   
 	         }
