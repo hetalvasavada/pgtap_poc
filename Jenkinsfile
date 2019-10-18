@@ -63,8 +63,8 @@ pipeline {
 	 stage('Publish Test Results') { 
 	        //This step will publish the result in Jenkins Build link under 'Extended TAP Tests Results'
 	        steps {
-	            timestamps {
-	              logstash{       
+	            //timestamps {
+	              //logstash{       
 	                     step([$class: "TapPublisher", testResults: "**/${env.pgreport}_${BUILD_NUMBER}*.tap"]) 
 	                //Next step is to gather datato send to ELK
 	                script {
@@ -73,18 +73,19 @@ pipeline {
 						def now = new Date()
 	                    def timee = now.format("yy/MM/dd:HH-mm", TimeZone.getTimeZone('UTC'))
 						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()   
-						println "${user} ++++ ${timee}"
 						def part1 = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Triggered_By\": \" ${user}\",	\"Triggered_Date\": \"${timee}\", "
-						println "${part1}"
-						def sample = parseTAPTests()
+						def sample = ""
+ 						timestamps {
+	              			logstash{       	           
+						          sample = parseTAPTests()
+					        }
+					    }
 						def part2 = "${sample} }"
 						def jsoncontent = "${part1} ${part2}"
-						println "${jsoncontent}"
 						//Collect User (who did last git commit) details and time of job run 
 						writeFile file: "message.json", text: "${jsoncontent}"
 					    sh "cat message.json"					  
 	                    def cmd = "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\""
-	                    sh 'echo $cmd'
 	                    def response = sh(returnStdout: true, script: "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\"")
                         sh "echo $response" 
 	                  } catch (Exception e) {
@@ -93,8 +94,8 @@ pipeline {
 	                  }  
 	                }
 	               
-	              }
-	            }   
+	             // }
+	           // }   
 	        }      
 	    }
 	
@@ -108,10 +109,9 @@ pipeline {
 	def thr = Thread.currentThread()
 	        def currentJob = manager.build
 	        def putToFile = "Sample"
-	        println "for (def action : currentJob.actions)"
 	        for (def action : currentJob.actions) {   
 	           if (action.getClass() == org.tap4j.plugin.TapTestResultAction) {
-	              println 'Gathered Test Results'
+	              println 'Gathering Test Results....'
 	              def noOfFailedTests = action.getFailCount() 
 				  def noOfTotalTests = action.getTotalCount()
 				  def noOfSkippedTests = action.getSkipCount()
@@ -120,17 +120,11 @@ pipeline {
 	   			  if (noOfFailedTests > 0) {
 	    				result = "FAILURE"
 	   			  }       
-	 			  println "TOTAL_NO_TESTS: ${noOfTotalTests}"
-	 			  println "TOTAL_PASS_TESTS: ${noOfPassedTests}"
-	 			  println "TOTAL_FAIL_TESTS: ${noOfFailedTests}"
-	  			  println "TOTAL_RESULTS: ${result}"
-	 			  //putToFile = "${noOfTotalTests},${noOfPassedTests},${noOfFailedTests},${result},${timee}"
-				  //def putToFile = "Sample Text"   
-	 			  //putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${result}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${env.TESTS_PASS}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"	   
+	 			  println "TOTAL_NO_TESTS: ${noOfTotalTests} , TOTAL_PASS_TESTS: ${noOfPassedTests}, TOTAL_FAIL_TESTS: ${noOfFailedTests}, TOTAL_RESULTS: ${result}"
 	 			  putToFile = "\"Job_Status\": \"${result}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${noOfPassedTests}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" "
-	 			  println "${putToFile}"
+	 			  //println "${putToFile}"
 	         }
 	       }
-	       println "End of parseTAPTests function"
+	       println "Done....End of parseTAPTests function"
 	    return putToFile.toString()
 	 }
