@@ -74,7 +74,7 @@ pipeline {
 	                    def timee = now.format("yy/MM/dd:HH-mm", TimeZone.getTimeZone('UTC'))
 						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()   
 						println "${user} ++++ ${timee}"
-						def part1 = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \" currentBuild.result \", \"Triggered_By\": \" ${user}\",	\"Triggered_Date\": \"${timee}\", "
+						def part1 = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Triggered_By\": \" ${user}\",	\"Triggered_Date\": \"${timee}\", "
 						println "${part1}"
 						def sample = parseTAPTests()
 						def part2 = "${sample} }"
@@ -124,11 +124,10 @@ pipeline {
 	 			  println "TOTAL_PASS_TESTS: ${noOfPassedTests}"
 	 			  println "TOTAL_FAIL_TESTS: ${noOfFailedTests}"
 	  			  println "TOTAL_RESULTS: ${result}"
-	  			  println "TOTAL_TIME: ${timee}"
 	 			  //putToFile = "${noOfTotalTests},${noOfPassedTests},${noOfFailedTests},${result},${timee}"
 				  //def putToFile = "Sample Text"   
 	 			  //putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${result}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${env.TESTS_PASS}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"	   
-	 			  putToFile = " \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${noOfPassedTests}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" "
+	 			  putToFile = "\"Job_Status\": \"${result}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${noOfPassedTests}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" "
 	 			  println "${putToFile}"
 	         }
 	       }
