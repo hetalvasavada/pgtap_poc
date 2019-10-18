@@ -6,7 +6,11 @@ pipeline {
       POSTGRES_HOST = "localhost"
       POSTGRES_USER = "postgres" 
       pgreport = "pgtapreport"
-      testdir = "pgtaptests"      
+      testdir = "pgtaptests"
+	  TESTS_TOTAL = 0
+	  TESTS_PASS = 0
+	  TESTS_FAIL = 0
+	  TESTS_SKIPPED = 0	        
    }
 
 
@@ -28,7 +32,7 @@ pipeline {
                    sh '/db_prereqs.sh ${POSTGRES_HOST} ${POSTGRES_USER}'
                    
                    //This is Unit Tests Suite:       
-                 // Get list of changed files list and check if it contains pgtaptests in it:
+                   // Get list of changed files list and check if it contains pgtaptests in it:
                         List<String> sourceChanged = sh(returnStdout: true, script: "git whatchanged -n 1").split()
                         def isSourceChanged = false
                         def isChangelogUpdated = false
@@ -36,15 +40,15 @@ pipeline {
                             if (sourceChanged[i].contains("testcases")) {
                                 // Found some new/edited tests files to be run under testcases folder, so run each one:
                                 isSourceChanged=true                                                              
-                                println sourceChanged[i]
-                                println isSourceChanged
+                                // println sourceChanged[i]
+                                //println isSourceChanged
                                 sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${sourceChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
-                                sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
+                                //sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
                             }                            
                         }                     
                             if (!isSourceChanged) {
-                                println "pgTapTests not changed in this git commit so not running any tests. No report will be generated or sent anywhere."
-                                return
+                                println "Source and Tests are not changed in this git commit so not running any tests. No rport will be generated or sent anywhere."
+                                sh "exit 0" 
                         }
                    
                   // sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/functions/function1_test.t -e >> ${env.WORKSPACE}/${env.pgreport}${BUILD_NUMBER}.tap"
@@ -53,7 +57,7 @@ pipeline {
      
             }
  
-      }
+        }
     }
 	
 	 stage('Publish Test Results') { 
@@ -65,11 +69,11 @@ pipeline {
 	                //Next step is to gather datato send to ELK
 	                script {
 	                  try {
-						println "Parse and get results data from TAP PLugin APIs"
+						println "Parse and get results data from TAP PLugin APIs"						
 						def sample = parseTAPTests(currentBuild.currentResult)
 						//Collect User (who did last git commit) details and time of job run 
 						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()                     
-						writeFile file: "report.txt", text: "RESULT_SET:${sample},${user}"
+						writeFile file: "report.txt", text: "${sample}"
 						sh "cat report.txt" 
 	                  } catch (Exception e) {
 	                      e.printStackTrace()
@@ -78,7 +82,8 @@ pipeline {
 	                }
 	                script {
 	                //  def now = new Date()
-	                  sh "cat message.json"
+	                  writeFile file: "message.json", text: "${sample}"
+					  sh "cat message.json"					  
 	                  def cmd = "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\""
 	                  sh 'echo $cmd'
 	                  def response = sh(returnStdout: true, script: "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\"")
@@ -105,27 +110,27 @@ pipeline {
 	              println 'Gathered Test Results'
 	              println "def noOfFailedTests = action.getFailCount()"
 	    		  def noOfFailedTests = action.getFailCount() 
-	   			  def noOfTotalTests = action.getTotalCount() 
+				  env.TESTS_FAIL =  action.getFailCount() 
+	   			  def noOfTotalTests = action.getTotalCount()
+				  env.TESTS_TOTAL = action.getTotalCount()	  
 	   			  def noOfSkippedTests = action.getSkipCount()
-	   			  def noOfPassedTests = noOfTotalTests - noOfFailedTests - noOfSkippedTests
-	   			  def result = "Pass"
+	   			  env.TESTS_SKIPPED = action.getSkipCount()
+				  def noOfPassedTests = noOfTotalTests - noOfFailedTests - noOfSkippedTests
+                  env.TESTS_PASS =  noOfTotalTests - noOfFailedTests - noOfSkippedTests
+	   			  def result = "SUCCESS"
 	   			  if (noOfFailedTests > 0) {
-	    				result = "Fail"
+	    				result = "FAILURE"
 	   			  }       
-	   			  println "def now = new Date()"
-	              def now = new Date()
-	              println now.format("yy/MM/dd.HH-mm", TimeZone.getTimeZone('UTC')) 
+	   			  def now = new Date()
 	              def timee = now.format("yy/MM/dd.HH-mm", TimeZone.getTimeZone('UTC'))
 	 			  println "TOTAL_NO_TESTS: ${noOfTotalTests}"
-	 			  println "TOTAL_PASS_TESTS: ${noOfPassedTests}"
+	 			  println "TOTAL_PASS_TESTS: ${env.TESTS_PASS}"
 	 			  println "TOTAL_FAIL_TESTS: ${noOfFailedTests}"
 	  			  println "TOTAL_RESULTS: ${result}"
 	  			  println "TOTAL_TIME: ${timee}"
-	 			  putToFile = "${noOfTotalTests},${noOfPassedTests},${noOfFailedTests},${result},${timee}"
+	 			  //putToFile = "${noOfTotalTests},${noOfPassedTests},${noOfFailedTests},${result},${timee}"
 				  //def putToFile = "Sample Text"   
-	 			  writeFile file: "message.json", text: "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${resultpassed}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL:\": \"${noOfTotalTests}\", \"TESTS_PASS:\": \"${noOfPassedTests}\",\"TESTS_FAIL:\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"
-
-	   
+	 			  putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${resultpassed}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL:\": \"${noOfTotalTests}\", \"TESTS_PASS:\": \"${env.TESTS_PASS}\",\"TESTS_FAIL:\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"	   
 	         }
 	       }
 	       println "End of parseTAPTests function"
