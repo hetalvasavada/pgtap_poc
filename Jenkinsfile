@@ -70,18 +70,15 @@ pipeline {
 	                script {
 	                  try {
 						println "Parse and get results data from TAP PLugin APIs"						
-						def sample = parseTAPTests(currentBuild.currentResult)
-						//Collect User (who did last git commit) details and time of job run 
 						def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()                     
-						writeFile file: "report.txt", text: "${sample}"
-						sh "cat report.txt" 
-						 writeFile file: "message.json", text: "${sample}"
+						def sample = parseTAPTests($user)
+						//Collect User (who did last git commit) details and time of job run 
+						writeFile file: "message.json", text: "${sample}"
 					    sh "cat message.json"					  
-	                     def cmd = "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\""
+	                    def cmd = "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\""
 	                    sh 'echo $cmd'
 	                    def response = sh(returnStdout: true, script: "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\"")
                         sh "echo $response" 
-	                
 	                  } catch (Exception e) {
 	                      e.printStackTrace()
 	                      currentBuild.result = 'FAILURE'
@@ -98,7 +95,7 @@ pipeline {
 }
 
 @NonCPS
-	def parseTAPTests(String resultpassed) {  
+	def parseTAPTests(String user) {  
 	println "Start of parseTAPTests function"
 	def thr = Thread.currentThread()
 	        def currentJob = manager.build
@@ -129,8 +126,8 @@ pipeline {
 	  			  println "TOTAL_TIME: ${timee}"
 	 			  //putToFile = "${noOfTotalTests},${noOfPassedTests},${noOfFailedTests},${result},${timee}"
 				  //def putToFile = "Sample Text"   
-	 			  //putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${resultpassed}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${env.TESTS_PASS}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"	   
-	 			  putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${result}\"}"
+	 			  //putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${result}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${env.TESTS_PASS}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"	   
+	 			  putToFile = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"${result}\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"${timee}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${env.TESTS_PASS}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"
 	 			  println "${putToFile}"
 	         }
 	       }
