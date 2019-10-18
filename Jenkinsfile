@@ -77,23 +77,9 @@ pipeline {
 	                  }  
 	                }
 	                script {
-	                  def now = new Date()
-                      sh """
-                         cat > message.json <<EOF
-                        {
-                        "build_number": "${BUILD_NUMBER}",
-                        "build_tag": "${BUILD_TAG}",
-                        "job_base_name": "${JOB_BASE_NAME}",
-                        "job_name": "${JOB_NAME}",
-                        "node_name": "${NODE_NAME}",
-                        "node_labels": "${NODE_LABELS}",
-                        "status": currentBuild.currentResult,
-                        "date": now.format("yy/MM/dd.HH-mm", TimeZone.getTimeZone('UTC')) 
-                        }
-                        EOF
-
-                        curl -XPUT '${env.JENKINS_HOST}:9200/logstashtest/jenkins/1?pretty' -d '@message.json'
-                        """
+	                //  def now = new Date()
+	                  sh "cat message.json"
+                      sh 'curl  -XPOST "http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins" -H "Content-Type: application/json" -d "@message.json"'
 	                }
 	              }
 	            }   
@@ -134,7 +120,10 @@ pipeline {
 	  println "TOTAL_RESULTS: ${result}"
 	  println "TOTAL_TIME: ${timee}"
 	 putToFile = "${noOfTotalTests},${noOfPassedTests},${noOfFailedTests},${result},${timee}"
-	//def putToFile = "Sample Text"     
+	//def putToFile = "Sample Text"   
+	
+	 writeFile file: "message.json", text: "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Job_Status\": \"currentBuild.currentResult\", \"Triggered By\": \"${user}\", \"Triggered_Date\": \"now.format('yy/MM/dd.HH-mm', TimeZone.getTimeZone('UTC'))\", \"TESTS_TOTAL:\": \"${noOfTotalTests}\", \"TESTS_PASS:\": \"${noOfPassedTests}\",\"TESTS_FAIL:\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" }"
+
 	   
 	         }
 	       }
