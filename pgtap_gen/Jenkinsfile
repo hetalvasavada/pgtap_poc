@@ -46,6 +46,8 @@ node {
                                                                        
                                                                    '''
                                                                    withCredentials([sshUserPrivateKey(credentialsId: 'username_with_privatekey', keyFileVariable: 'SSH_KEY')]) {
+                                                                   sh("git add .")
+                                                                   sh("git commit -m \"commiting new testcase\"")
                                                                    sh("git push origin test_branch")
                                                                     }
                                                                    //sh "git remote rm origin2"
