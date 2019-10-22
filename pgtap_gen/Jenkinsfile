@@ -25,7 +25,7 @@ node {
                         def isChangelogUpdated = false
                         for (int i = 0; i < sourceChanged.size(); i++) 
 						{
-                            println "sourceChanged[i].....!!!!"+ sourceChanged[i]
+                            
                             if (sourceChanged[i].contains("src")) {
                             
                                                                 // Found some new/edited tests files to be run under testcases folder, so run each one:
@@ -61,6 +61,15 @@ node {
                             if (!isSourceChanged) {
                             println "pgTapTests not changed in this git commit so not running any tests. No report will be generated or sent anywhere."
                            // return
+                           withCredentials([sshUserPrivateKey(credentialsId: 'username_with_privatekey', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                                                                   withEnv(["GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o User=${SSH_USER} -i ${SSH_KEY}"]) {
+                                                                   //sh "git remote add origin1 https://git.planittesting.com/hvasavada/pgtap_poc.git"
+                                                                   sh "git config --global user.name \"hvasavada@planittesting.com\""
+                                                                   //sh "git config --global user.email \"hvasavada@planittesting.com\""
+                                                                   sh "git add ."
+                                                                   sh "git commit -m \"commiting new testcase\""
+                                                                   sh "git remote add origin2 https://git.planittesting.com/hvasavada/pgtap_poc.git"
+                                                                   sh "git push -u origin2 master"
                         }
                         }
 											
