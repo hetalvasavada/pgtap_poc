@@ -46,6 +46,7 @@ node {
                                                                    '''
                                                                    withCredentials([sshUserPrivateKey(credentialsId: 'username_with_privatekey', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                                                                    withEnv(["GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o User=${SSH_USER} -i ${SSH_KEY}"]) {
+                                                                   sh "git clean -f -d"
                                                                    sh "git commit"
                                                                    sh "git push origin master"
     }
