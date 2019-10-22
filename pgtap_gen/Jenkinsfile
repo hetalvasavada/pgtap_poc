@@ -45,6 +45,9 @@ node {
                                                                        cat table_sample_schema1.sensor_log.sql
                                                                        
                                                                    '''
+                                                                   withCredentials([sshUserPrivateKey(credentialsId: 'username_with_privatekey', keyFileVariable: 'SSH_KEY')]) {
+                                                                   sh("git push origin master")
+                                                                    }
                                                                    //sh "git remote rm origin2"
                                                                    //withCredentials([sshUserPrivateKey(credentialsId: 'username_with_privatekey', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                                                                    //withEnv(["GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o User=${SSH_USER} -i ${SSH_KEY}"]) {
