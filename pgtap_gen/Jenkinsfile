@@ -48,6 +48,7 @@ node {
                        cd ${BUILD_NUMBER}    
 					   ls					   
                        pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
+                       ls
                        cd ..
                    '''
              }
