@@ -42,11 +42,12 @@ node {
                                                 					   ls					   
                                                                        pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
                                                                        ls
-                                                                       cd ..
+                                                                       
                                                                    '''
                                                                    withCredentials([sshUserPrivateKey(credentialsId: 'git_token_090420', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                                                                    withEnv(["GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o User=${SSH_USER} -i ${SSH_KEY}"]) {
                                                                    sh "git commit"
+                                                                   sh "git push origin master"
     }
 }
                                                                    
