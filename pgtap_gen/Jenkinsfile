@@ -47,7 +47,7 @@ node {
                                                                    withCredentials([sshUserPrivateKey(credentialsId: 'username_with_privatekey', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                                                                    withEnv(["GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o User=${SSH_USER} -i ${SSH_KEY}"]) {
                                                                    //sh "git remote add origin1 https://git.planittesting.com/hvasavada/pgtap_poc.git"
-                                                                   //sh "git config --global user.name \"hvasavada\""
+                                                                   sh "git config --global user.name \"hvasavada@planittesting.com\""
                                                                    //sh "git config --global user.email \"hvasavada@planittesting.com\""
                                                                    sh "git add ."
                                                                    sh "git commit -m \"commiting new testcase\""
