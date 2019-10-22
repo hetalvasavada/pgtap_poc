@@ -70,6 +70,8 @@ node {
                                                                    sh "git commit -m \"commiting new testcase\""
                                                                    sh "git remote add origin2 https://git.planittesting.com/hvasavada/pgtap_poc.git"
                                                                    sh "git push -u origin2 master"
+                                                                   }
+                                                                   }
                         }
                         }
 											
