@@ -1,4 +1,4 @@
---Commenttt
+--Commentt
 CREATE SCHEMA IF NOT EXISTS sample_schema1;
 
 
