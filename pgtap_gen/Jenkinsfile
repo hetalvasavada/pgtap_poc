@@ -61,7 +61,7 @@ node {
                         }                     
                             if (!isSourceChanged) {
                             println "pgTapTests not changed in this git commit so not running any tests. No report will be generated or sent anywhere."
-                            return
+                            break
                         
                         }
                         }
