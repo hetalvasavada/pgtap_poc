@@ -58,12 +58,10 @@ node {
                                                                    //sh "git push --set-upstream origin2 master"
  //   }
 //}
-                                                                   
-                                                                   
                         }                     
                             if (!isSourceChanged) {
                             println "pgTapTests not changed in this git commit so not running any tests. No report will be generated or sent anywhere."
-                           // return
+                
                         
                         }
                         }
