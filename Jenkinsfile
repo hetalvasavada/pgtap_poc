@@ -14,9 +14,11 @@ pipeline {
     stage('run!') {
       steps {
         script {
-		 sh 'docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile .'
-            docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests"){ db ->
-                docker.image('pgtapjenkins:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
+		// sh 'docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile .'
+		   docker.image('pgtapjenkins:2').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests"){ db ->
+         //   docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests"){ db ->
+                docker.image('pgtapjenkins:2').inside("--link ${db.id}:db") {
+                //docker.image('pgtapjenkins:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
                    sh '''
                      psql --version
                      until psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "select 1" > /dev/null 2>&1 || [ $RETRIES -eq 0 ]; do
@@ -47,7 +49,7 @@ pipeline {
                                 sh "exit 0" 
                         }
                    
-                  // sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/functions/function1_test.t -e >> ${env.WORKSPACE}/${env.pgreport}${BUILD_NUMBER}.tap"
+                   sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/functions/function1_test.t -e >> ${env.WORKSPACE}/${env.pgreport}${BUILD_NUMBER}.tap"
                   }
               }
      
