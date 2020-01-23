@@ -30,7 +30,7 @@ RUN rm -rf pgtap
 
 RUN git clone https://github.com/theory/pgtap.git \
     && cd pgtap && cp pgtap.control /usr/share/postgresql/9.4/extension/pgtap.control \
-	&& cp /usr/share/postgresql/9.4/extension/pgtap--0.95.0.sql /usr/share/postgresql/9.4/extension/pgtap--1.1.0.sql 
+	&& cp /usr/share/postgresql/9.4/extension/pgtap--0.95.0.sql /usr/share/postgresql/9.4/extension/pgtap--1.2.0.sql 
 	
 ADD ./db_prereqs.sh /db_prereqs.sh
 RUN chmod +x /db_prereqs.sh
