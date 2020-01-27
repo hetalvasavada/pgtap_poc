@@ -43,6 +43,7 @@
 																		   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
 																		   ls
 																		   cat table_sample_schema1.sensor_log.sql
+																		   cd ${BUILD_NUMBER}
 																		   
 																	   '''
 																	   
@@ -73,6 +74,7 @@
 		//https://git.planittesting.com/hvasavada/pgtap_poc.git"]]])
 		//    sh "git checkout master" //To get a local branch tracking remote
 		//	}
+		
 			sh 'git status'
 		}
 	}
