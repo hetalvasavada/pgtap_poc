@@ -47,7 +47,7 @@
 																		   git status
 																		   git add --all
 																		   git commit -m "Addin pgtap gen files"
-																		   git push
+																		   git push --set-upstream origin master
 																		   
 																	   '''
 																	   
