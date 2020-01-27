@@ -44,6 +44,7 @@
 																		   ls
 																		   cat table_sample_schema1.sensor_log.sql
 																		   git status
+																		   git add --all
 																		   
 																	   '''
 																	   
@@ -62,7 +63,7 @@
 				}
 			}
 			
-			stage('commit pgtap_gen testcases on GIT')
+		//	stage('commit pgtap_gen testcases on GIT')
 		//	{
 		//	sh 'git config --global credential.helper cache'
 		//	sh 'git config --global push.default simple'
