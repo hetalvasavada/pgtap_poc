@@ -1,76 +1,78 @@
-node {
-    withEnv(['POSTGRES_HOST=localhost',
-               'POSTGRES_USER=postgres',
-               'pgreport=pgtapreport']) 
-    {
-      
-    stage('poll scm')
-       {    
-         git credentialsId: 'hetal_git_token_311220', url: 'https://git.planittesting.com/hvasavada/pgtap_poc.git'
-         sh "docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile ."
-            docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests"){ db ->
-                docker.image('pgtapjenkins:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
-                   sh '''
-                     psql --version
-                     until psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "select 1" > /dev/null 2>&1 || [ $RETRIES -eq 0 ]; do
-                     echo "Waiting for postgres server, $((RETRIES-=1)) remaining attempts..."
-                     sleep 1
-                     done
-                   '''
-                   sh 'echo "Running DB Prerequisites to create pgtap extension"'
-                   sh "/db_prereqs.sh ${POSTGRES_HOST} ${POSTGRES_USER}"
-                   List<String> sourceChanged = sh(returnStdout: true, script: "git whatchanged -n 1").split()
-                       
-                        def isSourceChanged = false
-                        def isChangelogUpdated = false
-                        for (int i = 0; i < sourceChanged.size(); i++) 
-						{
-                            
-                            if (sourceChanged[i].contains("src")) {
-                            
-                                                                // Found some new/edited tests files to be run under testcases folder, so run each one:
-                                                                    isSourceChanged=true                                                              
-                                                                    println sourceChanged[i]
-                                                                    println isSourceChanged
-                                                                    sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${sourceChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
-                                                                    sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
-                                                                    sh 'echo "Running pg_tapgen......"'
-				  	                                       			sh '''
-                                                				       mkdir ${BUILD_NUMBER}
-                                                					   ls
-                                                                       cd ${BUILD_NUMBER}    
-                                                					   ls					   
-                                                                       pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
-                                                                       ls
-                                                                       cat table_sample_schema1.sensor_log.sql
-                                                                       
-                                                                   '''
-                                                                 
-                                                                   sh "git remote rm origin2"
-                                                                   withCredentials([sshUserPrivateKey(credentialsId: 'username_with_privatekey', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-                                                                   withEnv(["GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o User=${SSH_USER} -i ${SSH_KEY}"]) {
-                                                                   sh "git remote add origin1 https://git.planittesting.com/hvasavada/pgtap_poc.git"
-                                                                   sh "git config --global user.name \"hvasavada\""
-                                                                   sh "git config --global user.email \"hvasavada@planittesting.com\""
-                                                                   sh "git add ."
-                                                                   sh "git commit -m \"commiting new testcase\""
-                                                                   sh "git remote add origin2 https://git.planittesting.com/hvasavada/pgtap_poc.git"
-                                                                   sh "git push --set-upstream origin2 master"
-   }
-}
-                        }                     
-                            
-                        }
-                        if (!isSourceChanged) {
-                            println "pgTapTests not changed in this git commit so not running any tests. No report will be generated or sent anywhere."
-                           // return // continue
-                        
-                        }
-											
-                  
-				  
-             }
+	node {
+		withEnv(['POSTGRES_HOST=localhost',
+				   'POSTGRES_USER=postgres',
+				   'pgreport=pgtapreport']) 
+		{
+		  
+		stage('poll scm')
+		   {    
+			 git credentialsId: 'hetal_git_token_311220', url: 'https://git.planittesting.com/hvasavada/pgtap_poc.git'
+			 sh "docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile ."
+				docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests"){ db ->
+					docker.image('pgtapjenkins:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
+					   sh '''
+						 psql --version
+						 until psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "select 1" > /dev/null 2>&1 || [ $RETRIES -eq 0 ]; do
+						 echo "Waiting for postgres server, $((RETRIES-=1)) remaining attempts..."
+						 sleep 1
+						 done
+					   '''
+					   sh 'echo "Running DB Prerequisites to create pgtap extension"'
+					   sh "/db_prereqs.sh ${POSTGRES_HOST} ${POSTGRES_USER}"
+					   List<String> sourceChanged = sh(returnStdout: true, script: "git whatchanged -n 1").split()
+						   
+							def isSourceChanged = false
+							def isChangelogUpdated = false
+							for (int i = 0; i < sourceChanged.size(); i++) 
+							{
+								
+								if (sourceChanged[i].contains("src")) {
+								
+																	// Found some new/edited tests files to be run under testcases folder, so run each one:
+																		isSourceChanged=true                                                              
+																		println sourceChanged[i]
+																		println isSourceChanged
+																		sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${sourceChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
+																		sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
+																		sh 'echo "Running pg_tapgen......"'
+																		sh '''
+																		   mkdir ${BUILD_NUMBER}
+																		   ls
+																		   cd ${BUILD_NUMBER}    
+																		   ls					   
+																		   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
+																		   ls
+																		   cat table_sample_schema1.sensor_log.sql
+																		   
+																	   '''
+																	   
+							}                     
+								
+							}
+							if (!isSourceChanged) {
+								println "pgTapTests not changed in this git commit so not running any tests. No report will be generated or sent anywhere."
+							   // return // continue
+							
+							}
+												
+					  
+					  
+				 }
+				}
 			}
-        }
-    }
-}
+			
+			stage('commit pgtap_gen testcases on GIT')
+		//	{
+		//	sh 'git config --global credential.helper cache'
+		//	sh 'git config --global push.default simple'
+
+		//checkout([
+		//$class: 'GitSCM',
+		//branches: [[name: master]],
+		//extensions: [[$class: 'CloneOption', noTags: true, reference: '', shallow: true]],submoduleCfg: [],userRemoteConfigs: [[ credentialsId: 'hetal_git_token_311220', url: "
+		//https://git.planittesting.com/hvasavada/pgtap_poc.git"]]])
+		//    sh "git checkout master" //To get a local branch tracking remote
+		//	}
+			sh 'git status'
+		}
+	}
