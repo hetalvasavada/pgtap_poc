@@ -48,7 +48,7 @@
 																		   git add --all
 																		   git commit -m "Addin pgtap gen files"
 																		  withCredentials([usernamePassword(credentialsId: 'hetal_git_token_311220', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                                                                            git tag -a ${BUILD_NUMBER} -m 'Jenkins'"
+                                                                            git tag -a ${BUILD_NUMBER} -m 'Jenkins'
                                                                             git push https://${GIT_USERNAME}:${GIT_PASSWORD}@<REPO> --tags' }
 																	   '''
 																	   
