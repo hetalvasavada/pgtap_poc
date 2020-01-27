@@ -36,7 +36,7 @@
 																		sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
 																		sh 'echo "Running pg_tapgen......"'
 																		sh '''
-																		   git rm clean
+																		   git clean
 																		   mkdir ${BUILD_NUMBER}
 																		   ls
 																		   cd ${BUILD_NUMBER}    
