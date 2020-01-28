@@ -45,19 +45,18 @@
 																		   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
 																		   ls
 																		   cat table_sample_schema1.sensor_log.sql
-																	       git clone git@git.planittesting.com:hvasavada/pgtap_poc.git
+																	     
 																	   '''
 																	   sshagent (credentials: ['git_push_key_2801']) {
                                                                        
                                                                        sh('git config --global user.name "hvasavada"')
                                                                        sh('git config --global user.email hvasavada@planittesting.com')
                                                                        sh('git status')
-																	   sh('git clone git@git.planittesting.com:hvasavada/pgtap_poc.git')
 																	   sh('git add --all')
 																	   sh('git commit  --amend --reset-author -m "Adding pgtap gen files"')
                                                                        sh("git tag -a ${BUILD_NUMBER} -m 'Jenkins'")
-                                                                       
-                                                                        sh('git push git@git.planittesting.com:hvasavada/pgtap_poc.git --tags')
+                                                                       sh('git config http.sslVerify false')
+                                                                        sh('git push  git@git.planittesting.com:hvasavada/pgtap_poc.git --tags')
                                                                         }
 																	 
 																	     
