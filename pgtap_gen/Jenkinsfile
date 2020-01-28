@@ -56,7 +56,7 @@
                                                                        sh('git config --global user.name "hvasavada"')
                                                                        sh('git config --global user.email hvasavada@planittesting.com')
                                                                        sh('git status')
-																	   sh('git remote add origin git@git.planittesting.com:hvasavada/pgtap_poc.git')
+																	   sh('git remote add origin3 git@git.planittesting.com:hvasavada/pgtap_poc.git')
 																	   sh('git clone git@git.planittesting.com:hvasavada/pgtap_poc.git')
 																	   sh('git add --all')
 																	   sh('git commit  --amend --reset-author -m "Adding pgtap gen files"')
