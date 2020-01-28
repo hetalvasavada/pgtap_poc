@@ -48,12 +48,8 @@
 																	     
 																	   '''
 																	   sshagent (credentials: ['git_push_key_2801']) {
-                                                                       
-                                                                       sh('git config --global user.name "hvasavada"')
-                                                                       sh('git config --global user.email hvasavada@planittesting.com')
-                                                                       sh('git status')
 																	   sh('git add --all')
-																	   sh('git commit  --amend --reset-author -m "Adding pgtap gen files"')
+																	   sh('git commit -m "Adding pgtap gen files"')
                                                                        sh("git tag -a ${BUILD_NUMBER} -m 'Jenkins'")
                                                                        sh('git config http.sslVerify false')
                                                                         sh('git push  git@git.planittesting.com:hvasavada/pgtap_poc.git --tags')
