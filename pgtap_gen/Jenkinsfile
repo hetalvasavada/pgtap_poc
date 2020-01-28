@@ -8,7 +8,7 @@
 		   {    
 			 git credentialsId: 'hetal_git_token_311220', url: 'https://git.planittesting.com/hvasavada/pgtap_poc.git'
 			 git config --global user.name "hvasavada"
-             git config --global user.email hvasavada@planittesting.com
+             git config --global user.email "hvasavada@planittesting.com"
 			 sh "docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile ."
 				docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests"){ db ->
 					docker.image('pgtapjenkins:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
