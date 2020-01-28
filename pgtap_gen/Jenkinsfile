@@ -49,10 +49,11 @@
 																		   git commit -m "Addin pgtap gen files"
 																		
 																	   '''
-																	   withCredentials([usernamePassword(credentialsId: 'git_token_090420', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-																			sh("git tag -a ${BUILD_NUMBER} -m 'Jenkins'")
-																			sh('git push https://git.planittesting.com/hvasavada/pgtap_poc.git --tags')
-																		}
+																	   sshagent (credentials: ['username_with_privatekey']) {
+                                                                       sh("git tag -a ${BUILD_NUMBER} -m 'Jenkins'")
+                                                                        sh('git push https://git.planittesting.com/hvasavada/pgtap_poc.git --tags')
+                                                                        }
+																	 
 																	     
 							}                     
 								
