@@ -46,10 +46,9 @@
 																		   cat table_sample_schema1.sensor_log.sql
 																		   git config --global user.name "hvasavada"
                                                                            git config --global user.email hvasavada@planittesting.com
-                                                                           git commit --amend --reset-author
-																		   git status
+                                                                           git status
 																		   git add --all
-																		   git commit -m "Addin pgtap gen files"
+																		   git commit -m "Addin pgtap gen files" --amend --reset-author
 																		
 																	   '''
 																	   
