@@ -46,14 +46,16 @@
 																		   ls
 																		   cat table_sample_schema1.sensor_log.sql
 																		   
-                                                                           git status
+                                                                        
 																		  
 																		  
 																		
 																	   '''
-																	   sshagent (credentials: ['username_with_privatekey']) {
+																	   sshagent (credentials: ['git_push_key_2801']) {
                                                                        sh('git config --global user.name "hvasavada"')
                                                                        sh('git config --global user.email hvasavada@planittesting.com')
+                                                                       sh('git status')
+																	   
 																	   sh('git add --all')
 																	   sh('git commit -m "Adding pgtap gen files" --amend --reset-author')
                                                                        sh("git tag -a ${BUILD_NUMBER} -m 'Jenkins'")
