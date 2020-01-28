@@ -6,7 +6,7 @@
 		  
 		stage('poll scm')
 		   {    
-			 git credentialsId: 'hetal_git_token_311220', url: 'https://git.planittesting.com/hvasavada/pgtap_poc.git'
+			 git credentialsId: 'Person_Access_token_2801', url: 'https://git.planittesting.com/hvasavada/pgtap_poc.git'
 
 			 sh "docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile ."
 				docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests"){ db ->
