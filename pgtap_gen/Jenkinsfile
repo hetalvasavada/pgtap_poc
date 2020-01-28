@@ -51,7 +51,7 @@
 																	   sh('git add --all')
 																	   sh('git commit -m "Adding pgtap gen files"')
                                                                        sh("git tag -a ${BUILD_NUMBER} -m 'Jenkins'")
-                                                                       sh('git config http.sslVerify false')
+                                                                       sh('git config http.sslVerify true')
                                                                         sh('git push  git@git.planittesting.com:hvasavada/pgtap_poc.git --tags')
                                                                         }
 																	 
