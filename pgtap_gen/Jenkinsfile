@@ -44,11 +44,15 @@
 																		   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
 																		   ls
 																		   cat table_sample_schema1.sensor_log.sql
+																		   git config --global user.name "hvasavada"
+                                                                           git config --global user.email hvasavada@planittesting.com
+                                                                           git commit --amend --reset-author
 																		   git status
 																		   git add --all
 																		   git commit -m "Addin pgtap gen files"
 																		
 																	   '''
+																	   
 																	   sshagent (credentials: ['username_with_privatekey']) {
                                                                        sh("git tag -a ${BUILD_NUMBER} -m 'Jenkins'")
                                                                         sh('git push https://git.planittesting.com/hvasavada/pgtap_poc.git --tags')
