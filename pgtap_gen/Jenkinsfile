@@ -7,8 +7,7 @@
 		stage('poll scm')
 		   {    
 			 git credentialsId: 'hetal_git_token_311220', url: 'https://git.planittesting.com/hvasavada/pgtap_poc.git'
-			 git config --global user.name "hvasavada"
-             git config --global user.email "hvasavada@planittesting.com"
+
 			 sh "docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile ."
 				docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests"){ db ->
 					docker.image('pgtapjenkins:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
@@ -48,12 +47,15 @@
 																		   cat table_sample_schema1.sensor_log.sql
 																		   
                                                                            git status
-																		   git add --all
-																		   git commit -m "Adding pgtap gen files" --amend --reset-author
+																		  
+																		  
 																		
 																	   '''
-																	   
 																	   sshagent (credentials: ['username_with_privatekey']) {
+                                                                       sh('git config --global user.name "hvasavada"')
+                                                                       sh('git config --global user.email hvasavada@planittesting.com')
+																	   sh('git add --all')
+																	   sh('git commit -m "Adding pgtap gen files" --amend --reset-author')
                                                                        sh("git tag -a ${BUILD_NUMBER} -m 'Jenkins'")
                                                                         sh('git push https://git.planittesting.com/hvasavada/pgtap_poc.git --tags')
                                                                         }
