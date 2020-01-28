@@ -51,7 +51,7 @@
 																		  
 																		
 																	   '''
-																	   sshagent (credentials: ['git_push_key_2801']) {
+																	   sshagent (credentials: ['GIT_KEY_2801']) {
                                                                        sh('git config --global user.name "hvasavada"')
                                                                        sh('git config --global user.email hvasavada@planittesting.com')
                                                                        sh('git status')
