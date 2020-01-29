@@ -50,6 +50,8 @@ import hudson.model.*
           println "source: ${gitChanged[i]}"
           isgitChanged = true {
            def testFileName = getTestFileName(gitChanged[i])
+           println "${testFileName}"
+           println "${env.WORKSPACE}/${testdir}/${testFileName}"
            if (fileExists("${env.WORKSPACE}/${testdir}/${testFileName}")) {
             println "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${env.WORKSPACE}/${testdir}/${testFileName} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
             sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${env.WORKSPACE}/${testdir}/${testFileName} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
@@ -173,6 +175,7 @@ def removeCorrespondingElementFromList(List < String > gitChanged, String remove
 
 def getTestFileName(String srcFileName) {
  def sitem = srcFileName.split('/')
+ println "${sitem[0]} **** ${sitem[1]} ******** ${sitem[2]} ****** ${sitem[3]}"
  def srcName = "${sitem[3]}"
  sh "echo src File Name: ${srcName}"
  def str11 = ""
