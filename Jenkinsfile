@@ -75,7 +75,7 @@ import hudson.model.*
 																		   cat table_sample_schema1.sensor_log.sql
 																	     
 																	   '''
-println "pgtapgen testcases generated $$$$$$$$$$$$$$$4"
+          println "pgtapgen testcases generated ************"
          //   println "There is no pgTap Unit Test Script corresponding to Dev Code  ${gitChanged[i]}, hence failing the build...Please fix and commit your change! "
             //Fail the job with message that no tests exists for committed dev sql.
             currentBuild.result = 'FAILURE'
