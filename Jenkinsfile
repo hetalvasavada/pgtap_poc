@@ -61,7 +61,22 @@ import hudson.model.*
             aretestsrun = true
            } 
 		   else {
-            println "There is no pgTap Unit Test Script corresponding to Dev Code  ${gitChanged[i]}, hence failing the build...Please fix and commit your change! "
+		   	sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${gitChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
+																		sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
+																		sh 'echo "Running pg_tapgen......"'
+																		sh '''
+																	
+																		   mkdir ${BUILD_NUMBER}
+																		   ls
+																		   cd ${BUILD_NUMBER}    
+																		   ls					   
+																		   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
+																		   ls
+																		   cat table_sample_schema1.sensor_log.sql
+																	     
+																	   '''
+println "pgtapgen testcases generated $$$$$$$$$$$$$$$4"
+         //   println "There is no pgTap Unit Test Script corresponding to Dev Code  ${gitChanged[i]}, hence failing the build...Please fix and commit your change! "
             //Fail the job with message that no tests exists for committed dev sql.
             currentBuild.result = 'FAILURE'
             sh "exit 1"
