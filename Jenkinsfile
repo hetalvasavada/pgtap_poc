@@ -16,12 +16,10 @@ import hudson.model.*
     steps {
      script {
 
-     // sh 'docker build -t pgtapjenkins:${BUILD_NUMBER} -f Dockerfile .'
-		   docker.image('pgtapjenkins:2').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests"){ db ->
-         //   docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests"){ db ->
-                docker.image('pgtapjenkins:2').inside("--link ${db.id}:db") {
-                //docker.image('pgtapjenkins:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
-           sh '''
+      docker.image('pgtapjenkins:2').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests") {
+       db -> docker.image('pgtapjenkins:2').inside("--link ${db.id}:db") {
+       
+        sh '''
         psql --version
         until psql - h $ {
          POSTGRES_HOST
@@ -63,7 +61,8 @@ import hudson.model.*
             //Pass the source file name, the method will calculate test file name and remove entry for test file name in next line.
             gitChanged = removeCorrespondingElementFromList(gitChanged, "${gitChanged[i]}")
             aretestsrun = true
-           } else {
+           } 
+		   else {
             println "There is no pgTap Unit Test Script corresponding to Dev Code  ${gitChanged[i]}, hence failing the build...Please fix and commit your change! "
             //Fail the job with message that no tests exists for committed dev sql.
             currentBuild.result = 'FAILURE'
@@ -84,8 +83,8 @@ import hudson.model.*
      }
 
     }
-   }
-
+  
+}
    stage('Publish Test Results') {
     //This step will publish the result in Jenkins Build link under 'Extended TAP Tests Results'
     steps {
@@ -128,8 +127,8 @@ import hudson.model.*
 
   }
 
- }
 
+}
 @NonCPS
 def parseTAPTests() {
  println "Start of parseTAPTests function"
