@@ -48,7 +48,7 @@ import hudson.model.*
 
          if (gitChanged[i].contains("${env.srcdir}")) {
           println "source: ${gitChanged[i]}"
-          isgitChanged = true {
+          isgitChanged = true 
            def testFileName = getTestFileName(gitChanged[i])
            println "${testFileName}"
            println "${env.WORKSPACE}/${testdir}/${testFileName}"
@@ -66,7 +66,7 @@ import hudson.model.*
             currentBuild.result = 'FAILURE'
             sh "exit 1"
            }
-          }
+          
          }
         }
         if (!isgitChanged) {
