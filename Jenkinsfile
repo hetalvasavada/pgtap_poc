@@ -48,6 +48,7 @@ pipeline {
                                 // Found some new/edited tests files to be run under testcases folder, so run each one:
                                 isSourceChanged=true                                                              
                                 println sourceChanged[i]
+                                println ${env.WORKSPACE}
                                 println isSourceChanged
                                 sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${sourceChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
                                 //sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
