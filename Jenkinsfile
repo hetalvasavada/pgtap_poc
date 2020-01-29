@@ -22,7 +22,7 @@ import hudson.model.*
                 docker.image('pgtapjenkins:2').inside("--link ${db.id}:db") {
                 //docker.image('pgtapjenkins:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
            sh '''
-        psql--version
+        psql --version
         until psql - h $ {
          POSTGRES_HOST
         } - U $ {
