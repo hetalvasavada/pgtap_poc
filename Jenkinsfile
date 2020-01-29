@@ -33,14 +33,15 @@ import hudson.model.*
 
         //This is Unit Tests Suite:       
         // Get list of changed files list and check if it contains pgtaptests in it:
-        List<String> gitChanged=sh(returnStdout: true, script: "git whatchanged -n 1").split()
+        List<String> gitChanged = sh(returnStdout: true, script: "git whatchanged -n 1").split()
+        //List<String> gitChanged=sh(returnStdout: true, script: "git whatchanged -n 1").split()
         def isgitChanged = false
         for (int i = 0; i < gitChanged.size(); i++) {
-         if (gitChanged[i].contains("${env.testdir}")) {
+          if (gitChanged[i].contains("${env.testdir}")) {
           // Found some new/edited tests files to be run under testcases folder, so run each one:
           isgitChanged = true
-          // println gitChanged[i]
-          //println isgitChanged
+           println gitChanged[i]
+          println isgitChanged
           sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${gitChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
           //sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
          }
