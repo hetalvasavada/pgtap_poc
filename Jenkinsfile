@@ -17,79 +17,72 @@ import hudson.model.*
      script {
 
       docker.image('pgtapjenkins:2').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests") {
-       db -> docker.image('pgtapjenkins:2').inside("--link ${db.id}:db") {
+      db -> docker.image('pgtapjenkins:2').inside("--link ${db.id}:db") {
        
-       sh '''
-						 psql --version
-						 until psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "select 1" > /dev/null 2>&1 || [ $RETRIES -eq 0 ]; do
-						 echo "Waiting for postgres server, $((RETRIES-=1)) remaining attempts..."
-						 sleep 1
-						 done
-					   '''
-					  
+      sh '''
+    	 psql --version
+    	 until psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -c "select 1" > /dev/null 2>&1 || [ $RETRIES -eq 0 ]; do
+    	 echo "Waiting for postgres server, $((RETRIES-=1)) remaining attempts..."
+    	 sleep 1
+    	 done
+       '''
+				  
 
         sh 'echo "Running DB Prerequisites to create pgtap extension"'
         sh '/db_prereqs.sh ${POSTGRES_HOST} ${POSTGRES_USER}'
 
-        //This is Unit Tests Suite:       
         // Get list of changed files list and check if it contains pgtaptests in it:
         List<String> gitChanged = sh(returnStdout: true, script: "git whatchanged -n 1").split()
-        //List<String> gitChanged=sh(returnStdout: true, script: "git whatchanged -n 1").split()
+    
         def isgitChanged = false
         for (int i = 0; i < gitChanged.size(); i++) {
           if (gitChanged[i].contains("${env.testdir}")) {
-          // Found some new/edited tests files to be run under testcases folder, so run each one:
-          isgitChanged = true
-           println gitChanged[i]
-          println isgitChanged
-          sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${gitChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
-          //sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
+              // Found some new/edited tests files to be run under testcases folder, so run each one:
+              isgitChanged = true
+              sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${gitChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
          }
 
-         if (gitChanged[i].contains("${env.srcdir}")) {
-          println "source: ${gitChanged[i]}"
-          isgitChanged = true 
-           def testFileName = getTestFileName(gitChanged[i])
-           println "${testFileName}"
-           println "${env.WORKSPACE}/${testdir}/${testFileName}"
-           if (fileExists("${env.WORKSPACE}/${testdir}/${testFileName}")) {
-            println "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${env.WORKSPACE}/${testdir}/${testFileName} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
-            sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${env.WORKSPACE}/${testdir}/${testFileName} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
-
-            //Pass the source file name, the method will calculate test file name and remove entry for test file name in next line.
-            gitChanged = removeCorrespondingElementFromList(gitChanged, "${gitChanged[i]}")
-            aretestsrun = true
-           } 
-		   else {
-		   	sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${gitChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
-																		sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
-																		sh 'echo "Running pg_tapgen......"'
-																		sh '''
-																	       git clean -f
-																		   mkdir ${BUILD_NUMBER}
-																		   ls
-																		   cd ${BUILD_NUMBER}    
-																		   ls					   
-																		   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
-																		   ls
-																		   cat table_sample_schema1.mv_motor_company.sql
-																	     
-																	   '''
-          println "pgtapgen testcases generated ************"
-         //   println "There is no pgTap Unit Test Script corresponding to Dev Code  ${gitChanged[i]}, hence failing the build...Please fix and commit your change! "
-            //Fail the job with message that no tests exists for committed dev sql.
-            currentBuild.result = 'FAILURE'
-            sh "exit 1"
-           }
-          
-         }
-        }
+          if (gitChanged[i].contains("${env.srcdir}")) {
+              println "source: ${gitChanged[i]}"
+              isgitChanged = true 
+               def testFileName = getTestFileName(gitChanged[i])
+               println "${testFileName}"
+               println "${env.WORKSPACE}/${testdir}/${testFileName}"
+                   if (fileExists("${env.WORKSPACE}/${testdir}/${testFileName}")) {
+                        println "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${env.WORKSPACE}/${testdir}/${testFileName} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
+                        sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${env.WORKSPACE}/${testdir}/${testFileName} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
+                        //Pass the source file name, the method will calculate test file name and remove entry for test file name in next line.
+                        gitChanged = removeCorrespondingElementFromList(gitChanged, "${gitChanged[i]}")
+                        aretestsrun = true
+                   } 
+        		   else {
+        		   	    sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${gitChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
+						sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
+						sh 'echo "Running pg_tapgen......"'
+						sh '''
+					       git clean -f
+						   mkdir ${BUILD_NUMBER}
+						   ls
+						   cd ${BUILD_NUMBER}    
+						   ls					   
+						   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
+						   ls
+						   cat table_sample_schema1.mv_motor_company.sql
+					   '''
+                        println "There is no pgTap Unit Test Script corresponding to Dev Code  so creating testcases...Please extend and execute testcases in next run! "
+                        Fail the job with message that no tests will be run for committed dev sql.
+                        currentBuild.result = 'FAILURE'
+                        sh "exit 1"
+                   }
+                 }
+                }
+                
         if (!isgitChanged) {
          println "Source and Tests are not changed in this git commit so not running any tests. No rport will be generated or sent anywhere."
          sh "exit 0"
         }
 
-        sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/functions/function1_test.t -e >> ${env.WORKSPACE}/${env.pgreport}${BUILD_NUMBER}.tap"
+      //  sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f testcases/sample_schema1/functions/function1_test.t -e >> ${env.WORKSPACE}/${env.pgreport}${BUILD_NUMBER}.tap"
        }
       }
 
@@ -104,7 +97,7 @@ import hudson.model.*
      //timestamps {
      //logstash{       
      step([$class: "TapPublisher", testResults: "**/${env.pgreport}_${BUILD_NUMBER}*.tap"])
-     //Next step is to gather datato send to ELK
+     //Next step is to gather data to send to ELK
      script {
       try {
        println "Parse and get results data from TAP PLugin APIs"
@@ -174,23 +167,21 @@ def parseTAPTests() {
 
 def removeCorrespondingElementFromList(List < String > gitChanged, String removeItem) {
  // Remove corresponding test code item from list if exists for a particular test script.
- //println "Before List in method:"
  def sitem = removeItem.split('/')
  def srcName = "${sitem[3]}"
- //def onlyName = srcName.split('_')
  def onlyName = srcName.substring(0, srcName.length() - 4);
  //println "File to be removed from list: ${onlyName[0]}.sql"
- //gitChanged.removeAll { it.contains("${onlyName[0]}.sql") }
  println "File to be removed from list: ${onlyName}_test.t"
  gitChanged.removeAll {
-  it.contains("${onlyName}_test.t")
+ it.contains("${onlyName}_test.t")
  }
  return gitChanged
 }
 
 def getTestFileName(String srcFileName) {
  def sitem = srcFileName.split('/')
- println "${sitem[0]} **** ${sitem[1]} ******** ${sitem[2]} ****** ${sitem[3]}"
+ def srcFileLeng=sitem.size()
+ println "${srcFileLeng} ******************"
  def srcName = "${sitem[3]}"
  sh "echo src File Name: ${srcName}"
  def str11 = ""
@@ -199,8 +190,6 @@ def getTestFileName(String srcFileName) {
  } else {
   str11 = "${srcName}"
  }
- //def onlyName = srcName.split('\\.')
- //def testName = "${onlyName[0]}_test.t"
  return "${sitem[1]}/${sitem[2]}/${str11}_test.t"
- //return "${sitem[1]}/${sitem[2]}/${sitem[3]}/${str11}_test.t"
+ 
 }
