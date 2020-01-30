@@ -31,7 +31,7 @@ import hudson.model.*
         sh 'echo "Running DB Prerequisites to create pgtap extension"'
         sh '/db_prereqs.sh ${POSTGRES_HOST} ${POSTGRES_USER}'
 
-        // Get list of changed files list and check if it contains pgtaptests in it:
+        // Get list of changed files list and check if it contains pgtaptests in it::
         List<String> gitChanged = sh(returnStdout: true, script: "git whatchanged -n 1").split()
     
         def isgitChanged = false
