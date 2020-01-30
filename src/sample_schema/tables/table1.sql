@@ -8,7 +8,7 @@ BEGIN
 IF EXISTS (SELECT * FROM pg_catalog.pg_tables 
 WHERE schemaname = 'sample_schema'
 AND tablename = 'mv_motor_company') THEN
-RAISE NOTICE 'Table sample_schema1.mv_motor_company already exists.';
+RAISE NOTICE 'Table sample_schema.mv_motor_company already exists.';
 ELSE
 CREATE TABLE sample_schema.mv_motor_company (
 userid_test integer PRIMARY KEY,
