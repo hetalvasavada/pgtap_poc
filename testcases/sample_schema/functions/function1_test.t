@@ -9,7 +9,7 @@
 
 BEGIN;
 
-\i  src/sample_schema1/functions/function1.sql
+\i  src/sample_schema/functions/function1.sql
 
 SELECT plan(3);
 
