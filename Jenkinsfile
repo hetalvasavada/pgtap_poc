@@ -181,7 +181,7 @@ def getTestFileName(String srcFileName) {
  def sitem = srcFileName.split('/')
  def srcFileLeng=sitem.size()
  println "${srcFileLeng} ******************"
- def srcName = "${sitem[3]}"
+ def srcName = "${sitem[srcFileLeng-1]}"
  sh "echo src File Name: ${srcName}"
  def str11 = ""
  if (srcFileName.contains(".sql")) {
