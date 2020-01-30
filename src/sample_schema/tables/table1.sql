@@ -1,6 +1,6 @@
 ----comment..
-CREATE SCHEMA IF NOT EXISTS sample_schema1;
-CREATE OR REPLACE FUNCTION sample_schema1.create_mytable ()
+CREATE SCHEMA IF NOT EXISTS sample_schema;
+CREATE OR REPLACE FUNCTION sample_schema.create_mytable ()
 RETURNS void AS
 $func$
 BEGIN
@@ -21,4 +21,4 @@ price numeric CHECK (price > 0)
 END IF;
 END
 $func$ LANGUAGE plpgsql;
-SELECT sample_schema1.create_mytable();
+SELECT sample_schema.create_mytable();
