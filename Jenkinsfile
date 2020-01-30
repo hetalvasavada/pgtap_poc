@@ -40,9 +40,8 @@ import hudson.model.*
               println "${gitChanged[i]}"
               // Found some new/edited tests files to be run under testcases folder, so run each one:
               isgitChanged = true
-              println "**********1111"
               sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${gitChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
-               println "**********2"
+               
          }
 
           if (gitChanged[i].contains("${env.srcdir}")) {
@@ -63,13 +62,14 @@ import hudson.model.*
 						sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
 						sh 'echo "Running pg_tapgen......"'
 						sh '''
-					       git clean -f
+						   git clean -f
 						   mkdir ${BUILD_NUMBER}
 						   ls
 						   cd ${BUILD_NUMBER}    
 						   ls					   
 						   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
 						   ls
+						   cat table_sample_schema.mv_motor_company.sql
 					
 					   '''
                         println "There is no pgTap Unit Test Script corresponding to Dev Code  so creating testcases...Please extend and execute testcases in next run! "
@@ -145,7 +145,6 @@ def parseTAPTests() {
  def noOfSkippedTests = 0
  def noOfPassedTests = 0
  def result = "SUCCESS"
-
  def thr = Thread.currentThread()
  def currentJob = manager.build
  def putToFile = "Sample"
