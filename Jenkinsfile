@@ -16,8 +16,8 @@ import hudson.model.*
     steps {
      script {
 
-      docker.image('pgtapjenkins:2').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests") {
-      db -> docker.image('pgtapjenkins:2').inside("--link ${db.id}:db") {
+      docker.image('pgtapjenkins:${BUILD_NUMBER}').withRun("-h localhost -e POSTGRES_USER=postgres -v ${env.WORKSPACE}:/tmp/tests") {
+      db -> docker.image('pgtapjenkins:${BUILD_NUMBER}').inside("--link ${db.id}:db") {
        
       sh '''
     	 psql --version
