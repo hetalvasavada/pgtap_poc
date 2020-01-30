@@ -33,7 +33,7 @@ import hudson.model.*
 
         // Get list of changed files list and check if it contains pgtaptests in it::
         List<String> gitChanged = sh(returnStdout: true, script: "git whatchanged -n 1").split()
-    
+        println "********:git whatchanged -n 1"
         def isgitChanged = false
         for (int i = 0; i < gitChanged.size(); i++) {
           if (gitChanged[i].contains("${env.testdir}")) {
