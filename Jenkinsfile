@@ -70,7 +70,6 @@ import hudson.model.*
 						   cat table_sample_schema1.mv_motor_company.sql
 					   '''
                         println "There is no pgTap Unit Test Script corresponding to Dev Code  so creating testcases...Please extend and execute testcases in next run! "
-                        Fail the job with message that no tests will be run for committed dev sql.
                         currentBuild.result = 'FAILURE'
                         sh "exit 1"
                    }
