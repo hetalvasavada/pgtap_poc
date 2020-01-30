@@ -1,16 +1,16 @@
 ----comment.
-CREATE SCHEMA IF NOT EXISTS sample_schema1;
-CREATE OR REPLACE FUNCTION sample_schema1.create_mytable ()
+CREATE SCHEMA IF NOT EXISTS sample_schema;
+CREATE OR REPLACE FUNCTION sample_schema.create_mytable ()
 RETURNS void AS
 $func$
 BEGIN
 
 IF EXISTS (SELECT * FROM pg_catalog.pg_tables 
-WHERE schemaname = 'sample_schema1'
+WHERE schemaname = 'sample_schema'
 AND tablename = 'mv_motor_company') THEN
-RAISE NOTICE 'Table sample_schema1.mv_motor_company already exists.';
+RAISE NOTICE 'Table sample_schema.mv_motor_company already exists.';
 ELSE
-CREATE TABLE sample_schema1.mv_motor_company (
+CREATE TABLE sample_schema.mv_motor_company (
 userid_test integer PRIMARY KEY,
 company varchar NULL,
 subcoy int2 NULL,
@@ -21,4 +21,4 @@ price numeric CHECK (price > 0)
 END IF;
 END
 $func$ LANGUAGE plpgsql;
-SELECT sample_schema1.create_mytable();
+SELECT sample_schema.create_mytable();
