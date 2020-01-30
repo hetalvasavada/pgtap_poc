@@ -16,7 +16,7 @@ company varchar NULL,
 subcoy int2 NULL,
 state bpchar(2) NULL,
 price numeric CHECK (price > 0)
---product_no integer REFERENCES sample_schema1.mv_motor_company_pk (userid_test)
+--product_no integer REFERENCES sample_schema.mv_motor_company_pk (userid_test)
 );
 END IF;
 END
