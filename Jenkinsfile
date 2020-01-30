@@ -67,7 +67,7 @@ import hudson.model.*
 						   ls					   
 						   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
 						   ls
-						   cat table_sample_schema1.mv_motor_company.sql
+					
 					   '''
                         println "There is no pgTap Unit Test Script corresponding to Dev Code  so creating testcases...Please extend and execute testcases in next run! "
                         currentBuild.result = 'FAILURE'
