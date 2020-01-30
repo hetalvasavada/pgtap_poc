@@ -40,7 +40,9 @@ import hudson.model.*
               println "${gitChanged[i]}"
               // Found some new/edited tests files to be run under testcases folder, so run each one:
               isgitChanged = true
+              println "**********1111"
               sh "psql -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -f ${gitChanged[i]} -e >> ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.tap"
+               println "**********2"
          }
 
           if (gitChanged[i].contains("${env.srcdir}")) {
