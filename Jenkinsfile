@@ -65,14 +65,14 @@ import hudson.model.*
 																		sh "cat ${env.WORKSPACE}/${env.pgreport}_${BUILD_NUMBER}_${i}.sql"
 																		sh 'echo "Running pg_tapgen......"'
 																		sh '''
-																	
+																	       git clean -f
 																		   mkdir ${BUILD_NUMBER}
 																		   ls
 																		   cd ${BUILD_NUMBER}    
 																		   ls					   
 																		   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
 																		   ls
-																		   cat table_sample_schema1.sensor_log.sql
+																		   cat table_sample_schema1.mv_motor_company.sql
 																	     
 																	   '''
           println "pgtapgen testcases generated ************"
