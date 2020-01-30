@@ -18,8 +18,14 @@ TO-DO: An enhancement is planned to push the generated test cases to the git rep
 #Unit Test Tools:
 1. PGTAP: PGTAP is a unit test tool used to validate the sql code for postgres database. The unit tests are similar to sql queries and there is very less learning curve involved to adopt pgtap. You can find out more about this tool at https://pgtap.org/
 2. PG_TAP_GEN: pg_tapgen is a command-line utility to generate pgTAP tests to validate a database schema by reading an existing database and generating the tests to match. You can get more details here: https://metacpan.org/pod/distribution/TAP-Parser-SourceHandler-pgTAP/bin/pg_tapgen 
-3. 
 
+#Design:
+When a build is triggered, it will fetch the list of files affected by the git commit, and process the list. If any source or test file is affected, it will run the corresponding unit test file against the test database. 
+If a test file does not exist for any source code file, it will generate the test cases using the pg_tapgen utility. 
+The test data is also being sent to an ELK stack for monitoring purposes. An elaborate dashboard will be present to check the trends and patterns of the tests results.
+
+#Contact:
+For more information, please contact  hvasavada@planittesing.com or nprabhu@planittesing.com .
 
 
 
