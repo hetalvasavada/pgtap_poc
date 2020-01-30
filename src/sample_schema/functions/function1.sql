@@ -1,8 +1,8 @@
 --Comment.
-CREATE SCHEMA IF NOT EXISTS sample_schema1;
+CREATE SCHEMA IF NOT EXISTS sample_schema;
 
 
-CREATE OR REPLACE FUNCTION sample_schema1.sensor_log_func()
+CREATE OR REPLACE FUNCTION sample_schema.sensor_log_func()
 RETURNS void AS
 $func$
 BEGIN
@@ -22,7 +22,7 @@ END IF;
 END
 $func$ LANGUAGE plpgsql;
 
-SELECT sample_schema1.sensor_log_func();
+SELECT sample_schema.sensor_log_func();
 
 CREATE OR REPLACE FUNCTION sample_schema1.set_sensor_log(p_location VARCHAR, p_reading BIGINT)
 RETURNS BOOLEAN AS
@@ -39,4 +39,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT sample_schema1.set_sensor_log('hetal1',499);
+SELECT sample_schema.set_sensor_log('hetal1',499);
