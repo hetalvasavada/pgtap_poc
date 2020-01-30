@@ -1,4 +1,4 @@
-----comment..
+----comment.....
 CREATE SCHEMA IF NOT EXISTS sample_schema1;
 CREATE OR REPLACE FUNCTION sample_schema1.create_mytable ()
 RETURNS void AS
