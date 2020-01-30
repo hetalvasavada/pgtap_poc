@@ -101,23 +101,23 @@ import hudson.model.*
      step([$class: "TapPublisher", testResults: "**/${env.pgreport}_${BUILD_NUMBER}*.tap"])
      //Next step is to gather data to send to ELK
      script {
+     def sample = ""
       try {
        println "Parse and get results data from TAP PLugin APIs"
-       def now = new Date()
-       def timee = now.format("yy/MM/dd:HH-mm", TimeZone.getTimeZone('UTC'))
-       def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()
-       def part1 = "{\"Build_Number\": \"${BUILD_NUMBER}\", \"Job_Name\": \"${JOB_BASE_NAME}\", \"Triggered_By\": \" ${user}\",	\"Triggered_Date\": \"${timee}\", "
-       def sample = ""
        timestamps {
         logstash {
          sample = parseTAPTests()
         }
        }
-       def part2 = "${sample} }"
-       def jsoncontent = "${part1} ${part2}"
+       
+       def now = new Date()
        //Collect User (who did last git commit) details and time of job run 
-       writeFile file: "message.json", text: "${jsoncontent}"
-       sh "cat message.json"
+       def user = sh(returnStdout: true, script: "git log -1 --pretty=format:'%an'").split()
+       
+       //writeFile file: "message.json", text: "${jsoncontent}"
+       def timee = now.format("yyyy/MM/dd HH:mm:ss", TimeZone.getTimeZone('UTC'))
+       writeFile file: "message.json", text: "{ \"job_name\": \"${JOB_NAME}\", \"build_number\": ${BUILD_NUMBER}, \"triggered_by\": \"${user}\", \"triggered_date\": \"${timee}\", ${sample} } "
+       //sh "cat message.json"
        def cmd = "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\""
        def response = sh(returnStdout: true, script: "curl  -XPOST 'http://${env.JENKINS_HOST}:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\"")
        sh "echo $response"
@@ -161,8 +161,9 @@ def parseTAPTests() {
    }
   }
  }
- println "TOTAL_NO_TESTS: ${noOfTotalTests} , TOTAL_PASS_TESTS: ${noOfPassedTests}, TOTAL_FAIL_TESTS: ${noOfFailedTests}, TOTAL_RESULTS: ${result}"
- putToFile = "\"Job_Status\": \"${result}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${noOfPassedTests}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" "
+ //println "TOTAL_NO_TESTS: ${noOfTotalTests} , TOTAL_PASS_TESTS: ${noOfPassedTests}, TOTAL_FAIL_TESTS: ${noOfFailedTests}, TOTAL_RESULTS: ${result}"
+ //putToFile = "\"Job_Status\": \"${result}\", \"TESTS_TOTAL\": \"${noOfTotalTests}\", \"TESTS_PASS\": \"${noOfPassedTests}\",\"TESTS_FAIL\": \"${noOfFailedTests}\", \"TESTS_SKIPPED\": \"${noOfSkippedTests}\" "
+ putToFile = " \"tests_total\": ${noOfTotalTests}, \"tests_passed\": ${noOfPassedTests}, \"tests_failed\": ${noOfFailedTests}, \"tests_skipped\": ${noOfSkippedTests}, \"status\": \" ${result}\" "    
  println "Done....End of parseTAPTests function"
  return putToFile.toString()
 }
