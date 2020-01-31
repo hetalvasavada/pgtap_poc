@@ -76,7 +76,6 @@ import hudson.model.*
                                                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'hetal_github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
           					   sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/hetalvasavada/pgtap_poc.git HEAD:master"
 						   }
-}
                         println "There is no pgTap Unit Test Script corresponding to Dev Code  so creating testcases...Please extend and execute testcases in next run! "
                         currentBuild.result = 'FAILURE'
                         sh "exit 1"
