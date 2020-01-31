@@ -70,8 +70,13 @@ import hudson.model.*
 						   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
 						   ls
 						   cat table_sample_schema.mv_motor_sensor.sql
-					
-					   '''
+						   '''
+						   sh 'git add --all'
+           					   sh 'git commit -m "Merged to master"'
+                                                   withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'hetal_github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
+          					   sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/hetalvasavada/pgtap_poc.git HEAD:master"
+						   }
+}
                         println "There is no pgTap Unit Test Script corresponding to Dev Code  so creating testcases...Please extend and execute testcases in next run! "
                         currentBuild.result = 'FAILURE'
                         sh "exit 1"
