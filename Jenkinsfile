@@ -69,7 +69,7 @@ import hudson.model.*
 						   ls					   
 						   pg_tapgen -h ${POSTGRES_HOST} -U ${POSTGRES_USER} -d postgres
 						   ls
-						   cat table_sample_schema.mv_motor_company.sql
+						   cat table_sample_schema.mv_motor_sensor.sql
 					
 					   '''
                         println "There is no pgTap Unit Test Script corresponding to Dev Code  so creating testcases...Please extend and execute testcases in next run! "
