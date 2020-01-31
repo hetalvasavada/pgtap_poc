@@ -1,4 +1,4 @@
---format the output for nice TAP...
+--format the output for nice TAP.
 \pset format unaligned
 \pset tuples_only true
 \pset pager
