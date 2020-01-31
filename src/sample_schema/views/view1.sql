@@ -1,4 +1,4 @@
---Comment...Adding comments...
+--Comment...Adding 
 CREATE OR REPLACE FUNCTION sample_schema.create_mytable ()
   RETURNS void AS
 $func$
