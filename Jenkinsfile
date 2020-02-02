@@ -123,7 +123,7 @@ import hudson.model.*
        writeFile file: "message.json", text: "{ \"job_name\": \"${JOB_NAME}\", \"build_number\": ${BUILD_NUMBER}, \"triggered_by\": \"${user}\", \"triggered_date\": \"${timee}\", ${sample} } "
        sh "cat message.json"
    //    def cmd = "curl  -XPOST 'http://nswsydnlp353:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\""
-       def response = sh(returnStdout: true, script: "curl  -XPOST 'http://$nswsydnlp353:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\"")
+       def response = sh(returnStdout: true, script: "curl  -XPOST 'http://nswsydnlp353:9200/jenkinstest/jenkins' -H \"Content-Type: application/json\" -d \"@message.json\"")
        sh "echo $response"
       } catch (Exception e) {
        e.printStackTrace()
