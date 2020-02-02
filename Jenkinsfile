@@ -37,6 +37,7 @@ import hudson.model.*
         def isgitChanged = false
         for (int i = 0; i < gitChanged.size(); i++) {
           if (gitChanged[i].contains("${env.testdir}")) {
+	      ispgTAP = true
               println "${gitChanged[i]}"
               // Found some new/edited tests files to be run under testcases folder, so run each one:
               isgitChanged = true
@@ -45,6 +46,7 @@ import hudson.model.*
          }
 
           if (gitChanged[i].contains("${env.srcdir}")) {
+	      ispgTAP = true
               println "source: ${gitChanged[i]}"
               isgitChanged = true 
                def testFileName = getTestFileName(gitChanged[i])
@@ -84,6 +86,7 @@ import hudson.model.*
                 }
                 
         if (!isgitChanged) {
+	ispgTAP = false
          println "Source and Tests are not changed in this git commit so not running any tests. No rport will be generated or sent anywhere."
          sh "exit 0"
         }
@@ -105,6 +108,7 @@ import hudson.model.*
      step([$class: "TapPublisher", testResults: "**/${env.pgreport}_${BUILD_NUMBER}*.tap"])
      //Next step is to gather data to send to ELK
      script {
+	     if(ispgTAP){
      def sample = ""
       try {
        println "Parse and get results data from TAP PLugin APIs"
@@ -129,10 +133,8 @@ import hudson.model.*
        e.printStackTrace()
        currentBuild.result = 'FAILURE'
       }
+      }
      }
-
-     // }
-     // }   
     }
    }
 
