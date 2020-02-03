@@ -1,4 +1,4 @@
---Comment.
+--Comment...
 create schema sample_schema;
 CREATE OR REPLACE FUNCTION sample_schema.create_mytable ()
   RETURNS void AS
