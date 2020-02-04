@@ -11,6 +11,8 @@ If there is no unit-test file for a particular source sql, then using the pg_tap
 The newly generated testcases using pgtap_gen have the structure based testcases for the sql code. 
 TO-DO: An enhancement is planned to push the generated test cases to the git repo under a folder for the test files generated using pg_tap_gen utility.
 
+#Pre-condition:
+
 #Steps to Run:
 1. Auto Trigger: The Jenkins pipeline will be auto triggered when a change is committed to git
 2. From UI: When the Job is triggered from Jenkins UI, it will fetch the latest git commit id and run the testcases flow against the files that were modified in the latest git commit.
