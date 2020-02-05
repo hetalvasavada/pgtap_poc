@@ -7,15 +7,16 @@ Using Pipeline as a code, we auto trigger Jenkins jobs to be built when any sql 
 
 When the job is running, it will create the test setup on-the-fly at runtime using docker containers. The container will have the test database against which the source and unit test files are run.
 
-If there is no unit-test file for a particular source sql, then using the pg_tap_gen utility the pipeline will generate the testcases so that all code can be effectively tested.
+If there is no unit-test file for a particular source sql, then using the pg_tap_gen utility the pipeline will generate the testcases and it will be pushed on git in build number folder
 The newly generated testcases using pgtap_gen have the structure based testcases for the sql code. 
-TO-DO: An enhancement is planned to push the generated test cases to the git repo under a folder for the test files generated using pg_tap_gen utility.
 
 #Pre-condition:
+Clone and install all required applications using https://git.planittesting.com/jflorez/self-contained-jenkins-docker/tree/pgtap_poc
 
 #Steps to Run:
 1. Auto Trigger: The Jenkins pipeline will be auto triggered when a change is committed to git
 2. From UI: When the Job is triggered from Jenkins UI, it will fetch the latest git commit id and run the testcases flow against the files that were modified in the latest git commit.
+NOTE: We are still working on auto-trigger part
 
 #Unit Test Tools:
 1. PGTAP: PGTAP is a unit test tool used to validate the sql code for postgres database. The unit tests are similar to sql queries and there is very less learning curve involved to adopt pgtap. You can find out more about this tool at https://pgtap.org/
@@ -24,6 +25,7 @@ TO-DO: An enhancement is planned to push the generated test cases to the git rep
 #Design:
 When a build is triggered, it will fetch the list of files affected by the git commit, and process the list. If any source or test file is affected, it will run the corresponding unit test file against the test database. 
 If a test file does not exist for any source code file, it will generate the test cases using the pg_tapgen utility. 
+Detailed reports of pgTAP can be seen under "pgTAP_Extensions" tab in Jenkins
 The test data is also being sent to an ELK stack for monitoring purposes. An elaborate dashboard will be present to check the trends and patterns of the tests results.
 
 #Contact:
